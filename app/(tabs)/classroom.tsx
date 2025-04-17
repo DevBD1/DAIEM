@@ -1,50 +1,64 @@
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, Card, Button } from 'react-native-paper';
+import * as Linking from 'expo-linking';
 
 export default function Classroom() {
+  const handleOpenDocument = (url: string) => {
+    Linking.openURL(url);
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Text variant="headlineMedium" style={styles.title}>İlkyardım Eğitimi</Text>
       
       <Card style={styles.card}>
         <Card.Content>
-          <Text variant="titleMedium">Temel İlkyardım</Text>
+          <Text variant="titleMedium">Genel İlkyardım Bilgileri</Text>
           <Text variant="bodyMedium" style={styles.cardText}>
-            • İlkyardımın ABC'si
-            • Temel Yaşam Desteği
-            • Hasta/Yaralı Taşıma
+            İlkyardımın temel prensipleri ve genel yaklaşım
           </Text>
         </Card.Content>
         <Card.Actions>
-          <Button mode="contained">Başla</Button>
+          <Button 
+            mode="contained"
+            onPress={() => handleOpenDocument('https://drive.google.com/file/d/1Kr3OyfidEu-Z-y0Q2wWZYEsinKHFKCIm/view?usp=sharing')}
+          >
+            Dökümanı Aç
+          </Button>
         </Card.Actions>
       </Card>
 
       <Card style={styles.card}>
         <Card.Content>
-          <Text variant="titleMedium">Yaralanmalar</Text>
+          <Text variant="titleMedium">Vücut Sistemleri</Text>
           <Text variant="bodyMedium" style={styles.cardText}>
-            • Kesik ve Sıyrıklar
-            • Yanıklar
-            • Kırıklar ve Çıkıklar
+            Solunum yolu tıkanıklığı durumunda yapılması gerekenler
           </Text>
         </Card.Content>
         <Card.Actions>
-          <Button mode="contained">Başla</Button>
+          <Button 
+            mode="contained"
+            onPress={() => handleOpenDocument('https://drive.google.com/file/d/1Kr3OyfidEu-Z-y0Q2wWZYEsinKHFKCIm/view?usp=sharing')}
+          >
+            Dökümanı Aç
+          </Button>
         </Card.Actions>
       </Card>
 
       <Card style={styles.card}>
         <Card.Content>
-          <Text variant="titleMedium">Acil Durumlar</Text>
+          <Text variant="titleMedium">Acil Taşıma Teknikleri</Text>
           <Text variant="bodyMedium" style={styles.cardText}>
-            • Kalp Krizi
-            • Şok
-            • Zehirlenmeler
+            Temel yaşam desteği uygulamaları
           </Text>
         </Card.Content>
         <Card.Actions>
-          <Button mode="contained">Başla</Button>
+          <Button 
+            mode="contained"
+            onPress={() => handleOpenDocument('https://drive.google.com/file/d/1Kr3OyfidEu-Z-y0Q2wWZYEsinKHFKCIm/view?usp=sharing')}
+          >
+            Dökümanı Aç
+          </Button>
         </Card.Actions>
       </Card>
     </ScrollView>

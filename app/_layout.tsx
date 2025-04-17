@@ -1,36 +1,36 @@
-import { Slot } from 'expo-router';
-import { PaperProvider, MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
-import { useColorScheme } from 'react-native';
-import { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Stack } from 'expo-router';
+import { useFonts } from 'expo-font';
+import { useCallback } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [fontsLoaded, fontError] = useFonts({
+    MaterialIcons: require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf'),
+  });
 
-  useEffect(() => {
-    // Load saved theme preference
-    const loadThemePreference = async () => {
-      try {
-        const savedTheme = await AsyncStorage.getItem('theme');
-        if (savedTheme) {
-          setIsDarkMode(savedTheme === 'dark');
-        } else {
-          // If no saved preference, use system preference
-          setIsDarkMode(colorScheme === 'dark');
-        }
-      } catch (error) {
-        console.error('Error loading theme preference:', error);
-      }
-    };
-    loadThemePreference();
-  }, [colorScheme]);
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded || fontError) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
 
-  const theme = isDarkMode ? MD3DarkTheme : MD3LightTheme;
+  if (!fontsLoaded && !fontError) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#B31B1B" />
+      </View>
+    );
+  }
 
   return (
-    <PaperProvider theme={theme}>
-      <Slot />
-    </PaperProvider>
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    </View>
   );
 } 

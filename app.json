@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "DAIEM",
-    "slug": "DAIEM",
+    "slug": "daiem",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,20 +17,29 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.daiem.app"
+      "bundleIdentifier": "com.daiem.app",
+      "infoPlist": {
+        "NSDocumentsDirectoryUsageDescription": "This app needs access to documents directory to store theme preferences.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to photos."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.daiem.app"
+      "package": "com.daiem.app",
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font"
     ],
     "scheme": "daiem"
   }
