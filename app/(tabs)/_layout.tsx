@@ -28,7 +28,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color }: { color: string }) => (
             <MaterialIcons name="home" size={28} color={color} />
           ),
         }}
@@ -36,7 +36,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="classroom"
         options={{
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color }: { color: string }) => (
             <MaterialIcons name="school" size={28} color={color} />
           ),
         }}
@@ -44,16 +44,8 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color }: { color: string }) => (
             <MaterialIcons name="settings" size={28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="icontest"
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="bug-report" size={28} color={color} />
           ),
         }}
       />
