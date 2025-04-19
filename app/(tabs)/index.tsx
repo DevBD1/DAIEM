@@ -61,12 +61,24 @@ export default function Home() {
           </View>
           <View style={styles.contactRow}>
             <MaterialIcons name="phone" size={24} color="#BFBFBF" style={styles.icon} />
-            <Text variant="bodyLarge" style={styles.cardText}>+90 551 481 80 58</Text>
+            <Text 
+              variant="bodyLarge" 
+              style={styles.cardText}
+              onPress={() => handleOpenURL('tel:+905514818058')}
+            >
+              +90 551 481 80 58
+            </Text>
           </View>
           <View style={styles.contactRow}>
             <MaterialIcons name="phone" size={24} color="#BFBFBF" style={styles.icon} />
-            <Text variant="bodyLarge" style={styles.cardText}>+90 543 776 44 89</Text>
-          </View>
+             <Text 
+              variant="bodyLarge" 
+              style={styles.cardText}
+              onPress={() => handleOpenURL('tel:+905437764489')}
+            >
+              +90 543 776 44 89
+            </Text>
+           </View>
           <View style={styles.contactRow}>
             <MaterialIcons name="email" size={24} color="#BFBFBF" style={styles.icon} />
             <Text 
