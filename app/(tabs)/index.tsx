@@ -49,14 +49,15 @@ export default function Home() {
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
       <Text variant="headlineMedium" style={styles.title}>
-        {/*İlkyardım Eğitimleri*/}
+        1
+        {/*Deniz Antalya İlk Yardım Eğitim Merkezi*/}
       </Text>
 
       <Surface style={[styles.card, { marginBottom: 16 }]} elevation={2}>
         <Text variant="titleLarge" style={styles.cardTitle}>
           {isLoggedIn ? 'Kullanıcı Bilgileri' : 'Bize Katıl'}
         </Text>
-        {!isLoggedIn && <Text style={[styles.infoText,{paddingLeft:10,paddingTop:10}]}>Eğitim için dersleri inceleyebilir, kayıt için  bize ulaşabilirsiniz.</Text>}
+        {!isLoggedIn && <Text style={[styles.infoText,{paddingLeft:10,paddingTop:10}]}>Eğitim için dersleri inceleyebilir, kayıt için bize ulaşabilirsiniz.</Text>}
         <View style={styles.contentContainer}>
           {isLoggedIn ? (
             <>
@@ -190,13 +191,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#282b30',
   },
   title: {
-    marginBottom: 24,
+    marginBottom: 0,
     color: '#FFFFFF',
     textAlign: 'left',
     fontSize: 16,
   },
   scrollViewContent: {
-    paddingBottom: 200,
+    paddingTop: 0,
+    paddingBottom: 12,
   },
   infoText: {
     color: '#FFFFFF'
@@ -211,7 +213,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: '#FFFFFF',
     backgroundColor: '#7289da',
-    padding: 10,
+    padding: 6,
     fontSize: 20,
     textAlign: 'center',
   },
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   button: {
-    marginTop: 8,
+    marginTop: 4,
     backgroundColor: '#7289da',
   },
   buttonContainer: {
@@ -241,17 +243,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   buttonContent: {
-    height: 32,
+    height: 40,
   },
   buttonLabel: {
-    fontSize: 16,
+    fontSize: 14,
     letterSpacing: 0.5,
     color: '#FFFFFF',
   },
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   icon: {
     marginRight: 10,
