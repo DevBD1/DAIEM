@@ -3,7 +3,6 @@ import { Text, Button, Surface, } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Carousel from 'react-native-snap-carousel';
 
 const { width: screenWidth } = Dimensions.get('window');
 

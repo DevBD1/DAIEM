@@ -1,5 +1,10 @@
 import { Tabs } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import { Image, Text, View, StyleSheet } from 'react-native';
+import mottos from '../../assets/mottos.json';
+
+const randomMotto =
+  mottos[Math.floor(Math.random() * mottos.length)];
 
 export default function TabsLayout() {
   return (
@@ -9,11 +14,27 @@ export default function TabsLayout() {
         tabBarActiveTintColor: '#B31B1B',
         tabBarInactiveTintColor: '#BFBFBF',
         headerShown: true,
+        headerTintColor: "#FFFFFF",
         headerTransparent: false,
-        headerTitle: '',
+        headerTitle: "",
         headerStyle: {
           backgroundColor: '#4A4A4A',
         },
+        headerLeft: () => (
+          <View style={styles.headerContainer}>
+            <Image
+              source={require('../../assets/daiem-logo.png')}
+              style={styles.logoStyle}
+              accessibilityLabel="DAIEM Logo" 
+              accessible={true}
+            />
+            <Text style={styles.mottoText} numberOfLines={1}>
+              {randomMotto}
+            </Text>
+          </View>
+        ),
+        headerRight: () => null,
+      
         tabBarStyle: {
           backgroundColor: '#4A4A4A',
           borderTopWidth: 0.5,
@@ -22,7 +43,7 @@ export default function TabsLayout() {
           paddingTop: 8,
           paddingBottom: 8,
         },
-        tabBarShowLabel: false,
+        tabBarShowLabel: false
       }}
     >
       <Tabs.Screen
@@ -31,7 +52,7 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }: { color: string }) => (
             <MaterialIcons name="home" size={28} color={color} />
           ),
-        }}
+        }} 
       />
       <Tabs.Screen
         name="classroom"
@@ -51,4 +72,32 @@ export default function TabsLayout() {
       />
     </Tabs>
   );
-} 
+}
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    paddingHorizontal: 16,
+    tintColor: '#FFFFFF',
+  },
+  logoStyle: {
+    width: 48,
+    height: 48,
+    resizeMode: 'contain',
+    marginLeft: -8,
+    marginTop: 0,
+    marginRight: 16,
+    //tintColor: '#FFFFFF',
+  },
+  headerContainerMotto:{
+    paddingRight: 16,
+    flex:1,
+  },
+  mottoText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    minWidth:180,
+  },
+});
