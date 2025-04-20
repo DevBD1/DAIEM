@@ -1,4 +1,4 @@
-import { View, StyleSheet, Linking, Image, Dimensions, ScrollView } from 'react-native';
+import { View, StyleSheet, Linking, Image, Dimensions, ScrollView, SafeAreaView } from 'react-native';
 import { Text, Button, Surface, } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -22,7 +22,7 @@ export default function Home() {
   ];
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
       <Text variant="headlineMedium" style={styles.title}>
         İlkyardım Eğitimleri
       </Text>
@@ -112,7 +112,7 @@ export default function Home() {
           </View>
         </View>
       </Surface>
-    </View>
+    </ScrollView>
     
   );
 }
@@ -127,6 +127,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     color: '#FFFFFF',
     textAlign: 'center',
+  },
+  scrollViewContent: {
+    paddingBottom: 20,
   },
   card: {
     borderRadius: 12,
