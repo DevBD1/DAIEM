@@ -49,7 +49,6 @@ export default function Home() {
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
       <Text variant="headlineMedium" style={[styles.title, {marginBottom: 12}]}>
-        1
         {/*Deniz Antalya İlk Yardım Eğitim Merkezi*/}
       </Text>
 
@@ -191,7 +190,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#282b30',
   },
   title: {
-    
     color: '#FFFFFF',
     textAlign: 'left',
     fontSize: 16,
