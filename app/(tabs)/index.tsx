@@ -1,9 +1,8 @@
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:1486970087.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:3116330810.
-// Suggested code may be subject to a license. Learn more: ~LicenseLog:3354868539.
-import { View, StyleSheet, Linking, Image, Dimensions, ScrollView, Pressable, Modal} from 'react-native';
-import { Text, Button, Surface, } from 'react-native-paper';
-import { useState } from 'react';
+import { View, StyleSheet, Linking, Image, Dimensions, ScrollView, Pressable, Modal } from 'react-native';
+import { Text, Button, Surface } from 'react-native-paper';
+import { useState } from 'react'; // Importing useState
+import React from 'react';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -11,10 +10,10 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock login state
   const insets = useSafeAreaInsets();
-
   const [isZoomed, setIsZoomed] = useState(false);
-
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleOpenURL = (url: string) => {
     Linking.openURL(url).catch((err) => console.error('An error occurred', err));
@@ -26,10 +25,8 @@ export default function Home() {
     require('../../assets/carousel/door.jpeg'),
     require('../../assets/carousel/facility.jpeg'),
   ];
-
-  const [modalVisible, setModalVisible] = useState(false);
   const [modalImage, setModalImage] = useState(null);
-
+  
   const handleImagePress = (index: number) => {
     setIsZoomed(true);
     setModalImage(carouselImages[index] || undefined);
@@ -40,31 +37,56 @@ export default function Home() {
     setModalVisible(false);
   };
 
-
-
+  const handleLogin = () => {
+    // Navigate to login page (not yet implemented)
+    console.log('Login button pressed');
+  };
+  
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
 
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
       <Text variant="headlineMedium" style={styles.title}>
-      {/*İlkyardım Eğitimleri*/}
+        {/*İlkyardım Eğitimleri*/}
       </Text>
 
-      <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
+      <Surface style={[styles.card, { marginBottom: 16 }]} elevation={2}>
         <Text variant="titleLarge" style={styles.cardTitle}>
-          Acil Durumlar
+          {isLoggedIn ? 'Kullanıcı Bilgileri' : 'Bize Katıl'}
         </Text>
+        {!isLoggedIn && <Text style={[styles.infoText,{paddingLeft:10,paddingTop:10}]}>Eğitim için dersleri inceleyebilir, kayıt için  bize ulaşabilirsiniz.</Text>}
         <View style={styles.contentContainer}>
-          <Text variant="bodyLarge" style={styles.cardText}>
-            • Solunum Yolu Tıkanıklığı{'\n'}• Kalp Durması{'\n'}• Kanama{'\n'}•
-            Yanıklar{'\n'}• Kırıklar
-          </Text>
-          <Button
-            mode="contained"
-            style={styles.button}
-            contentStyle={styles.buttonContent}
-            labelStyle={styles.buttonLabel}>
-            Detaylı Bilgi
-          </Button>
+          {isLoggedIn ? (
+            <>
+              <Image source={require('../../assets/icon.png')} style={styles.profileImage} />
+              <Text variant="bodyLarge" style={styles.cardText}>Ad: John</Text>
+              <Text variant="bodyLarge" style={styles.cardText}>Soyad: Doe</Text>
+              <Button mode="contained" style={styles.button} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogout}>
+                Çıkış Yap
+              </Button>
+            </>
+          ) : (
+            <>
+              <View style={styles.buttonContainer}>
+                <Button
+                  mode="contained"
+                  style={[styles.button, { flex: 1, marginRight: 8 }]}
+                  contentStyle={styles.buttonContent}
+                  labelStyle={styles.buttonLabel}
+                  onPress={() => handleOpenURL('https://www.google.com/maps/search/?api=1&query=Bah%C3%A7elievler+Mh.+5006+Sk.+No:+37+Manavgat+%2F+Antalya')}
+                >
+                    Adresimiz
+                </Button>
+                <Button mode="contained" style={[styles.button, { flex: 1 }]} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogin}> Giriş Yap
+                
+                </Button>
+              </View>
+
+
+            </>
+          )}
         </View>
       </Surface>
 
@@ -76,19 +98,19 @@ export default function Home() {
                     source={image} style={styles.carouselImage}
                      />
 
-                </Pressable>
+                  </Pressable>
               ))}
-          </ScrollView>
-          <Modal
-            visible={modalVisible}
-            onRequestClose={closeModal}
-            transparent={true}
-            animationType="slide"
-          >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'rgba(0,0,0,0.5)' }}>
-              <View >
-                <ScrollView  maximumZoomScale={2} minimumZoomScale={1} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center', }}>
-                    { modalImage && (
+            </ScrollView>
+            <Modal
+              visible={modalVisible}
+              onRequestClose={closeModal}
+              transparent={true}
+              animationType="slide"
+            >
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                <View >
+                  <ScrollView maximumZoomScale={2} minimumZoomScale={1} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center', }}>
+                    {modalImage && (
                     <Pressable onPress={closeModal} >
                       <Image
                           source={modalImage as any} style={[{width: isZoomed ? screenWidth * 0.9 : screenWidth, height: isZoomed ? screenWidth : 200, resizeMode: 'contain', marginHorizontal: isZoomed ? 10 : 0}]}
@@ -144,13 +166,14 @@ export default function Home() {
             </Text>
            </View>
           <View style={styles.contactRow}>
-            <MaterialIcons name="email" size={24} color="#BFBFBF" style={styles.icon} />
-            <Text 
-              variant="bodyLarge" 
-              style={styles.cardText} 
-              onPress={() => handleOpenURL('mailto:denizantalyailkyardim@gmail.com')}
-            >
-              denizantalyailkyardim@gmail.com
+          <MaterialIcons name="email" size={24} color="#BFBFBF" style={styles.icon} />
+            <Text
+              variant="bodyLarge"
+              style={[styles.cardText, { marginBottom: 0 }]}
+               onPress={() => handleOpenURL('mailto:denizantalyailkyardim@gmail.com')}
+               >
+              denizantalyailkyardim@gmail.com{' '}
+
             </Text>
           </View>
         </View>
@@ -175,6 +198,9 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     paddingBottom: 200,
   },
+  infoText: {
+    color: '#FFFFFF'
+  },
   card: {
     borderRadius: 24,
     backgroundColor: '#424549',
@@ -185,6 +211,14 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: '#FFFFFF',
     backgroundColor: '#7289da',
+    padding: 10,
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  link: {
+    color: 'lightblue',
+    textDecorationLine: 'underline',
+    backgroundColor: '#424549',
     padding: 10,
     fontSize: 20,
     textAlign:'center',
@@ -201,6 +235,10 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 8,
     backgroundColor: '#7289da',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   buttonContent: {
     height: 32,
@@ -225,4 +263,11 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'cover',
   },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+
 });
