@@ -1,8 +1,11 @@
-import { View, StyleSheet, Linking, Text as RNText } from 'react-native';
-import { Text, Button, Surface } from 'react-native-paper';
+import { View, StyleSheet, Linking, Image, Dimensions, ScrollView } from 'react-native';
+import { Text, Button, Surface, } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Carousel from 'react-native-snap-carousel';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export default function Home() {
   const insets = useSafeAreaInsets();
@@ -10,6 +13,13 @@ export default function Home() {
   const handleOpenURL = (url: string) => {
     Linking.openURL(url).catch((err) => console.error('An error occurred', err));
   };
+
+  const carouselImages = [
+    require('../../assets/carousel/classroom.jpeg'),
+    require('../../assets/carousel/dolls.jpeg'),
+    require('../../assets/carousel/door.jpeg'),
+    require('../../assets/carousel/facility.jpeg'),
+  ];
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -34,6 +44,17 @@ export default function Home() {
             Detaylı Bilgi
           </Button>
         </View>
+      </Surface>
+
+      <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+              {carouselImages.map((image, index) => (
+                  <Image 
+                      key={index} 
+                      source={image} 
+                      style={styles.carouselImage} />
+              ))}
+          </ScrollView>
       </Surface>
 
       <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
@@ -149,4 +170,10 @@ const styles = StyleSheet.create({
     width: 24, 
     textAlign: 'center',
   },
+  carouselImage: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+  },
+
 });
