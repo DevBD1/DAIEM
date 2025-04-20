@@ -2,7 +2,6 @@ import { Tabs } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image, Text, View, StyleSheet } from 'react-native';
 import mottos from '../../assets/mottos.json';
-import { Platform } from 'react-native';
 const randomMotto =
   mottos[Math.floor(Math.random() * mottos.length)];
 
@@ -10,15 +9,25 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerTitleAlign: 'center',
-        tabBarActiveTintColor: '#B31B1B',
-        tabBarInactiveTintColor: '#BFBFBF',
         headerShown: true,
-        headerTintColor: "#FFFFFF",
-        headerTransparent: false,
         headerTitle: "",
+        headerTitleAlign: 'center',
+        headerTintColor: "#8C8C8C",
+        headerTransparent: false,
         headerStyle: {
-          backgroundColor: '#4A4A4A',
+          backgroundColor: '#1e2124',
+        },
+//
+        tabBarActiveTintColor: '#7289da',
+        tabBarInactiveTintColor: '#8C8C8C',
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: '#1e2124',
+          borderTopWidth: 0.5,
+          borderTopColor: '#8C8C8C',
+          height: 64,
+          paddingTop: 8,
+          paddingBottom: 8,
         },
         headerLeft: () => (
           <View style={styles.headerContainer}>
@@ -33,17 +42,7 @@ export default function TabsLayout() {
             </Text>
           </View>
         ),
-        headerRight: () => null,
-      
-        tabBarStyle: {
-          backgroundColor: '#4A4A4A',
-          borderTopWidth: 0.5,
-          borderTopColor: '#8C8C8C',
-          height: 64,
-          paddingTop: 8,
-          paddingBottom: 8,
-        },
-        tabBarShowLabel: false
+        headerRight: () => null
       }}
     >
       <Tabs.Screen
@@ -52,7 +51,7 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }: { color: string }) => (
             <View style={styles.tabIconContainer}>
               <MaterialIcons name="home" size={28} color={color} />
-              <Text style={[styles.tabLabel, { color }]}>Ana Sayfa</Text>
+              {/*<Text style={[styles.tabLabel, { color }]}>Ana Sayfa</Text>*/}
             </View>
           ),
         }} 
@@ -63,7 +62,7 @@ export default function TabsLayout() {
          tabBarIcon: ({ color }: { color: string }) => (
             <View style={styles.tabIconContainer}>
               <MaterialIcons name="school" size={28} color={color} />
-              <Text style={[styles.tabLabel, { color }]}>Sınıflar</Text>
+              {/*<Text style={[styles.tabLabel, { color }]}>Sınıflar</Text>*/}
             </View>
           )
         }}
@@ -74,7 +73,7 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }: { color: string }) => ( 
             <View style={styles.tabIconContainer}>
               <MaterialIcons name="settings" size={28} color={color} />
-              <Text style={[styles.tabLabel, { color }]}>Ayarlar</Text>
+              {/*<Text style={[styles.tabLabel, { color }]}>Ayarlar</Text>*/}
             </View>
           )
         }}
@@ -95,9 +94,9 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     resizeMode: 'contain',
-    marginLeft: -8,
-    marginTop: 0,
-    marginRight: 16,
+    marginLeft: -10,
+    marginTop: -2,
+    marginRight: 12,
     //tintColor: '#FFFFFF',
   },
   headerContainerMotto:{
@@ -106,8 +105,8 @@ const styles = StyleSheet.create({
   },
   mottoText: {
     color: '#FFFFFF',
-    fontSize: 12,
-    minWidth:180,
+    fontSize: 16,
+    minWidth: 256,
   },
   tabIconContainer: {
     alignItems: 'center',

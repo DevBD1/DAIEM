@@ -46,7 +46,7 @@ export default function Home() {
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
       <Text variant="headlineMedium" style={styles.title}>
-        İlkyardım Eğitimleri
+      {/*İlkyardım Eğitimleri*/}
       </Text>
 
       <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
@@ -98,7 +98,6 @@ export default function Home() {
               </View>
             </View>
           </Modal>
-
       </Surface>
 
       <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
@@ -165,42 +164,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#4A4A4A',
+    backgroundColor: '#282b30',
   },
   title: {
     marginBottom: 24,
     color: '#FFFFFF',
-    textAlign: 'center',
+    textAlign: 'left',
+    fontSize: 16,
   },
   scrollViewContent: {
-    paddingBottom: 20,
+    paddingBottom: 200,
   },
   card: {
-    borderRadius: 12,
-    backgroundColor: '#4A4A4A',
+    borderRadius: 24,
+    backgroundColor: '#424549',
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#8C8C8C',
   },
   cardTitle: {
     color: '#FFFFFF',
-    backgroundColor: '#B31B1B',
+    backgroundColor: '#7289da',
     padding: 10,
+    fontSize: 20,
+    textAlign:'center',
   },
   contentContainer: {
     padding: 10,
   },
   cardText: {
     marginBottom: 16,
-    color: '#BFBFBF',
-    lineHeight: 24,
+    color: '#FFFFFF',
+    lineHeight: 20,
+    fontSize: 14,
   },
   button: {
     marginTop: 8,
-    backgroundColor: '#B31B1B',
+    backgroundColor: '#7289da',
   },
   buttonContent: {
-    height: 44,
+    height: 32,
   },
   buttonLabel: {
     fontSize: 16,
@@ -210,7 +213,7 @@ const styles = StyleSheet.create({
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   icon: {
     marginRight: 10,
