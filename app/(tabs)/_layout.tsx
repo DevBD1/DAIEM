@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image, Text, View, StyleSheet } from 'react-native';
 import mottos from '../../assets/mottos.json';
-
+import { Platform } from 'react-native';
 const randomMotto =
   mottos[Math.floor(Math.random() * mottos.length)];
 
@@ -50,24 +50,33 @@ export default function TabsLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color }: { color: string }) => (
-            <MaterialIcons name="home" size={28} color={color} />
+            <View style={styles.tabIconContainer}>
+              <MaterialIcons name="home" size={28} color={color} />
+              <Text style={[styles.tabLabel, { color }]}>Ana Sayfa</Text>
+            </View>
           ),
         }} 
       />
       <Tabs.Screen
         name="classroom"
         options={{
-          tabBarIcon: ({ color }: { color: string }) => (
-            <MaterialIcons name="school" size={28} color={color} />
-          ),
+         tabBarIcon: ({ color }: { color: string }) => (
+            <View style={styles.tabIconContainer}>
+              <MaterialIcons name="school" size={28} color={color} />
+              <Text style={[styles.tabLabel, { color }]}>Sınıflar</Text>
+            </View>
+          )
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          tabBarIcon: ({ color }: { color: string }) => (
-            <MaterialIcons name="settings" size={28} color={color} />
-          ),
+          tabBarIcon: ({ color }: { color: string }) => ( 
+            <View style={styles.tabIconContainer}>
+              <MaterialIcons name="settings" size={28} color={color} />
+              <Text style={[styles.tabLabel, { color }]}>Ayarlar</Text>
+            </View>
+          )
         }}
       />
     </Tabs>
@@ -99,5 +108,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     minWidth:180,
+  },
+  tabIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabLabel: {
+    fontSize: 10,
   },
 });

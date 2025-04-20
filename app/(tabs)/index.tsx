@@ -1,5 +1,9 @@
-import { View, StyleSheet, Linking, Image, Dimensions, ScrollView, SafeAreaView } from 'react-native';
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:1486970087.
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:3116330810.
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:3354868539.
+import { View, StyleSheet, Linking, Image, Dimensions, ScrollView, Pressable, Modal} from 'react-native';
 import { Text, Button, Surface, } from 'react-native-paper';
+import { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -8,6 +12,9 @@ const { width: screenWidth } = Dimensions.get('window');
 
 export default function Home() {
   const insets = useSafeAreaInsets();
+
+  const [isZoomed, setIsZoomed] = useState(false);
+
 
   const handleOpenURL = (url: string) => {
     Linking.openURL(url).catch((err) => console.error('An error occurred', err));
@@ -20,12 +27,28 @@ export default function Home() {
     require('../../assets/carousel/facility.jpeg'),
   ];
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalImage, setModalImage] = useState(null);
+
+  const handleImagePress = (index: number) => {
+    setIsZoomed(true);
+    setModalImage(carouselImages[index] || undefined);
+    setModalVisible(true);
+  };
+  const closeModal = () => {
+    setIsZoomed(false);
+    setModalVisible(false);
+  };
+
+
+
+
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
       <Text variant="headlineMedium" style={styles.title}>
         İlkyardım Eğitimleri
       </Text>
-      
+
       <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
         <Text variant="titleLarge" style={styles.cardTitle}>
           Acil Durumlar
@@ -48,18 +71,40 @@ export default function Home() {
       <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
               {carouselImages.map((image, index) => (
-                  <Image 
-                      key={index} 
-                      source={image} 
-                      style={styles.carouselImage} />
+                <Pressable key={index} onPress={() => handleImagePress(index)}>
+                  <Image
+                    source={image} style={styles.carouselImage}
+                     />
+
+                </Pressable>
               ))}
           </ScrollView>
+          <Modal
+            visible={modalVisible}
+            onRequestClose={closeModal}
+            transparent={true}
+            animationType="slide"
+          >
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor:'rgba(0,0,0,0.5)' }}>
+              <View >
+                <ScrollView  maximumZoomScale={2} minimumZoomScale={1} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center', }}>
+                    { modalImage && (
+                    <Pressable onPress={closeModal} >
+                      <Image
+                          source={modalImage as any} style={[{width: isZoomed ? screenWidth * 0.9 : screenWidth, height: isZoomed ? screenWidth : 200, resizeMode: 'contain', marginHorizontal: isZoomed ? 10 : 0}]}
+                        />
+                    </Pressable>)} 
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
+
       </Surface>
 
       <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
         <Text variant="titleMedium" style={styles.cardTitle}>Bize Ulaşın</Text>
         <View style={styles.contentContainer}>
-        <View style={styles.contactRow}>
+          <View style={styles.contactRow}>
             <MaterialIcons name="location-on" size={24} color="#BFBFBF" style={styles.icon} />
             <Text 
               variant="bodyLarge" 
@@ -90,7 +135,7 @@ export default function Home() {
             </Text>
           </View>
           <View style={styles.contactRow}>
-            <MaterialIcons name="phone" size={24} color="#BFBFBF" style={styles.icon} />
+          <MaterialIcons name="phone" size={24} color="#BFBFBF" style={styles.icon} />
              <Text 
               variant="bodyLarge" 
               style={styles.cardText}
@@ -112,7 +157,7 @@ export default function Home() {
         </View>
       </Surface>
     </ScrollView>
-    
+
   );
 }
 
@@ -173,9 +218,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   carouselImage: {
-    width: '100%',
+    width: screenWidth,
     height: 200,
     resizeMode: 'cover',
   },
-
 });
