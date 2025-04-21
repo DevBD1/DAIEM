@@ -48,11 +48,11 @@ export default function Home() {
 
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
-      <Text variant="headlineMedium" style={[styles.title, {marginBottom: 12}]}>
-        {/*Deniz Antalya İlk Yardım Eğitim Merkezi*/}
-      </Text>
+      {/*<Text variant="headlineMedium" style={[styles.title, {marginBottom: 12}]}>
+        Deniz Antalya İlk Yardım Eğitim Merkezi
+      </Text>*/}
 
-      <Surface style={[styles.card, { marginBottom: 16 }]} elevation={2}>
+      <Surface style={[styles.card, { marginBottom: 16 }, { marginTop: 16 }]} elevation={2}>
         <Text variant="titleLarge" style={styles.cardTitle}>
           {isLoggedIn ? 'Kullanıcı Bilgileri' : 'Bize Katıl'}
         </Text>
