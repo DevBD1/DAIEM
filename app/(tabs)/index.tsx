@@ -108,18 +108,44 @@ export default function Home() {
               animationType="slide"
             >
               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                <View >
-                  <ScrollView maximumZoomScale={2} minimumZoomScale={1} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center', }}>
+                <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                  <ScrollView 
+                    maximumZoomScale={2} 
+                    minimumZoomScale={1} 
+                    contentContainerStyle={{ 
+                      flex: 1, 
+                      justifyContent: 'center', 
+                      alignItems: 'center',
+                      width: '100%',
+                      height: '100%'
+                    }}
+                  >
                     {modalImage && (
-                    <Pressable onPress={closeModal} >
+                    <Pressable 
+                      onPress={closeModal} 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        justifyContent: 'center', 
+                        alignItems: 'center' 
+                      }}
+                    >
                       <Image
-                          source={modalImage as any} style={[{width: isZoomed ? screenWidth * 0.9 : screenWidth, height: isZoomed ? screenWidth : 200, resizeMode: 'contain', marginHorizontal: isZoomed ? 10 : 0}]}
-                        />
+                        source={modalImage as any} 
+                        style={[
+                          {
+                            width: isZoomed ? screenWidth * 0.9 : screenWidth, 
+                            height: isZoomed ? screenWidth : 200, 
+                            resizeMode: 'contain', 
+                            marginHorizontal: isZoomed ? 10 : 0
+                          }
+                        ]}
+                      />
                     </Pressable>)} 
-                </ScrollView>
+                  </ScrollView>
+                </View>
               </View>
-            </View>
-          </Modal>
+            </Modal>
       </Surface>
 
       <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
