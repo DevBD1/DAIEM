@@ -20,10 +20,10 @@ export default function Home() {
   };
 
   const carouselImages = [
+    require('../../assets/carousel/facility.jpeg'),
+    require('../../assets/carousel/door.jpeg'),
     require('../../assets/carousel/classroom.jpeg'),
     require('../../assets/carousel/dolls.jpeg'),
-    require('../../assets/carousel/door.jpeg'),
-    require('../../assets/carousel/facility.jpeg'),
   ];
   const [modalImage, setModalImage] = useState(null);
   
@@ -63,12 +63,21 @@ export default function Home() {
   };
 
   return (
-    <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={[
+        styles.scrollViewContent, 
+        { 
+          paddingTop: 44,
+          paddingBottom: 8
+        }
+      ]}
+    >
       {/*<Text variant="headlineMedium" style={[styles.title, {marginBottom: 12}]}>
         Deniz Antalya İlk Yardım Eğitim Merkezi
       </Text>*/}
 
-      <Surface style={[styles.card, { marginBottom: 16 }, { marginTop: 16 }]} elevation={2}>
+      <Surface style={[styles.card, { marginBottom: 16 }, { marginTop: -42 }]} elevation={2}>
         <Text variant="titleLarge" style={styles.cardTitle}>
           {isLoggedIn ? 'Kullanıcı Bilgileri' : 'Bize Katıl'}
         </Text>
@@ -99,8 +108,6 @@ export default function Home() {
                   Giriş Yap
                 </Button>
               </View>
-
-
             </>
           )}
         </View>
