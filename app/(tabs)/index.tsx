@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   cardText: {
-    marginBottom: 16,
+    marginBottom: 0,
     color: '#FFFFFF',
     lineHeight: 20,
     fontSize: 14,
@@ -303,11 +303,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 4,
+    paddingVertical: 8,
   },
   icon: {
     marginRight: 10,
-    width: 24, 
-    textAlign: 'center',
+    width: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   carouselImage: {
     width: screenWidth,
