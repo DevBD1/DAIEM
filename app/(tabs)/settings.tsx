@@ -8,20 +8,32 @@ export default function Settings() {
   const insets = useSafeAreaInsets();
 
   return (
-    <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={[
+        styles.scrollViewContent, 
+        { 
+          paddingTop: 40,
+          paddingBottom: 8
+        }
+      ]}
+    >
       <Text variant="headlineMedium" style={[styles.title, { marginBottom: 16 }]}>Uygulama Ayarları</Text>
 
-      <Surface style={[styles.card, { marginBottom: 16 }]} elevation={2}>
-        <View style={styles.contentContainer}>
-          <View style={styles.settingRow}>
-            <Text variant="titleMedium" style={styles.cardText}>
-              Bildirimler
-            </Text>
-            <Switch
-              value={notifications}
-              onValueChange={setNotifications}
-              color="#7289da" // Consistent with button color
-            />
+      <Surface style={[styles.card]} elevation={2}>
+        <View style={styles.cardWrapper}>
+          <Text variant="titleLarge" style={styles.cardTitle}>Bildirimler</Text>
+          <View style={styles.contentContainer}>
+            <View style={styles.settingRow}>
+              <Text variant="titleMedium" style={[styles.cardText, { marginBottom: 0 }]}>
+                Bildirim İzinleri
+              </Text>
+              <Switch
+                value={notifications}
+                onValueChange={setNotifications}
+                color="#7289da"
+              />
+            </View>
           </View>
         </View>
       </Surface>
@@ -31,7 +43,6 @@ export default function Settings() {
 
 const styles = StyleSheet.create({
   scrollViewContent: {
-    paddingTop: 0,
     paddingBottom: 12,
   },
   container: {
@@ -47,9 +58,13 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 24,
     backgroundColor: '#424549',
-    overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#8C8C8C',
+    marginBottom: 16,
+  },
+  cardWrapper: {
+    overflow: 'hidden',
+    borderRadius: 24,
   },
   cardTitle: {
     color: '#FFFFFF',
