@@ -69,7 +69,7 @@ export default function Home() {
       contentContainerStyle={[
         styles.scrollViewContent, 
         { 
-          paddingTop: 44,
+          paddingTop: 40,
           paddingBottom: 8
         }
       ]}
@@ -78,154 +78,160 @@ export default function Home() {
         Deniz Antalya İlk Yardım Eğitim Merkezi
       </Text>*/}
 
-      <Surface style={[styles.card, { marginBottom: 16 }, { marginTop: -42 }]} elevation={2}>
-        <Text variant="titleLarge" style={styles.cardTitle}>
-          {isLoggedIn ? 'Kullanıcı Bilgileri' : 'Bize Katıl'}
-        </Text>
-        {!isLoggedIn && <Text style={[styles.infoText,{paddingLeft:10,paddingTop:10}]}>Eğitim için dersleri inceleyebilir, kayıt için bize ulaşabilirsiniz.</Text>}
-        <View style={styles.contentContainer}>
-          {isLoggedIn ? (
-            <>
-              <Image source={require('../../assets/icon.png')} style={styles.profileImage} />
-              <Text variant="bodyLarge" style={styles.cardText}>Ad: John</Text>
-              <Text variant="bodyLarge" style={styles.cardText}>Soyad: Doe</Text>
-              <Button mode="contained" style={styles.button} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogout}>
-                Çıkış Yap
-              </Button>
-            </>
-          ) : (
-            <>
-              <View style={styles.buttonContainer}>
-                <Button
-                  mode="contained"
-                  style={[styles.button, { flex: 1, marginRight: 8 }]}
-                  contentStyle={styles.buttonContent}
-                  labelStyle={styles.buttonLabel}
-                  onPress={handleOpenAddress}
-                >
-                  Adresimiz
+      <Surface style={[styles.card]} elevation={2}>
+        <View style={styles.cardWrapper}>
+          <Text variant="titleLarge" style={styles.cardTitle}>
+            {isLoggedIn ? 'Kullanıcı Bilgileri' : 'Bize Katıl'}
+          </Text>
+          {!isLoggedIn && <Text style={[styles.infoText,{paddingLeft:10,paddingTop:10}]}>Eğitim için dersleri inceleyebilir, kayıt için bize ulaşabilirsiniz.</Text>}
+          <View style={styles.contentContainer}>
+            {isLoggedIn ? (
+              <>
+                <Image source={require('../../assets/icon.png')} style={styles.profileImage} />
+                <Text variant="bodyLarge" style={styles.cardText}>Ad: John</Text>
+                <Text variant="bodyLarge" style={styles.cardText}>Soyad: Doe</Text>
+                <Button mode="contained" style={styles.button} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogout}>
+                  Çıkış Yap
                 </Button>
-                <Button mode="contained" style={[styles.button, { flex: 1 }]} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogin}>
-                  Giriş Yap
-                </Button>
-              </View>
-            </>
-          )}
+              </>
+            ) : (
+              <>
+                <View style={styles.buttonContainer}>
+                  <Button
+                    mode="contained"
+                    style={[styles.button, { flex: 1, marginRight: 8 }]}
+                    contentStyle={styles.buttonContent}
+                    labelStyle={styles.buttonLabel}
+                    onPress={handleOpenAddress}
+                  >
+                    Adresimiz
+                  </Button>
+                  <Button mode="contained" style={[styles.button, { flex: 1 }]} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogin}>
+                    Giriş Yap
+                  </Button>
+                </View>
+              </>
+            )}
+          </View>
         </View>
       </Surface>
 
-      <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
+      <Surface style={[styles.card]} elevation={2}>
+        <View style={styles.cardWrapper}>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              {carouselImages.map((image, index) => (
-                <Pressable key={index} onPress={() => handleImagePress(index)}>
-                  <Image
-                    source={image} style={styles.carouselImage}
-                     />
+            {carouselImages.map((image, index) => (
+              <Pressable key={index} onPress={() => handleImagePress(index)}>
+                <Image
+                  source={image} style={styles.carouselImage}
+                   />
 
-                  </Pressable>
-              ))}
-            </ScrollView>
-            <Modal
-              visible={modalVisible}
-              onRequestClose={closeModal}
-              transparent={true}
-              animationType="slide"
-            >
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                  <ScrollView 
-                    key={modalVisible ? 'modal-open' : 'modal-closed'}
-                    maximumZoomScale={2} 
-                    minimumZoomScale={1} 
-                    contentContainerStyle={{ 
-                      flex: 1, 
+                </Pressable>
+            ))}
+          </ScrollView>
+          <Modal
+            visible={modalVisible}
+            onRequestClose={closeModal}
+            transparent={true}
+            animationType="slide"
+          >
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+              <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                <ScrollView 
+                  key={modalVisible ? 'modal-open' : 'modal-closed'}
+                  maximumZoomScale={2} 
+                  minimumZoomScale={1} 
+                  contentContainerStyle={{ 
+                    flex: 1, 
+                    justifyContent: 'center', 
+                    alignItems: 'center',
+                    width: '100%',
+                    height: '100%'
+                  }}
+                >
+                  {modalImage && (
+                  <Pressable 
+                    onPress={closeModal} 
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
                       justifyContent: 'center', 
-                      alignItems: 'center',
-                      width: '100%',
-                      height: '100%'
+                      alignItems: 'center' 
                     }}
                   >
-                    {modalImage && (
-                    <Pressable 
-                      onPress={closeModal} 
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        justifyContent: 'center', 
-                        alignItems: 'center' 
-                      }}
-                    >
-                      <Image
-                        source={modalImage as any} 
-                        style={[
-                          {
-                            width: isZoomed ? screenWidth * 0.9 : screenWidth, 
-                            height: isZoomed ? screenWidth : 200, 
-                            resizeMode: 'contain', 
-                            marginHorizontal: isZoomed ? 10 : 0
-                          }
-                        ]}
-                      />
-                    </Pressable>)} 
-                  </ScrollView>
-                </View>
+                    <Image
+                      source={modalImage as any} 
+                      style={[
+                        {
+                          width: isZoomed ? screenWidth * 0.9 : screenWidth, 
+                          height: isZoomed ? screenWidth : 200, 
+                          resizeMode: 'contain', 
+                          marginHorizontal: isZoomed ? 10 : 0
+                        }
+                      ]}
+                    />
+                  </Pressable>)} 
+                </ScrollView>
               </View>
-            </Modal>
+            </View>
+          </Modal>
+        </View>
       </Surface>
 
-      <Surface style={[styles.card, {marginBottom:16}]} elevation={2}>
-        <Text variant="titleMedium" style={styles.cardTitle}>Bize Ulaşın</Text>
-        <View style={styles.contentContainer}>
-          <View style={styles.contactRow}>
-            <MaterialIcons name="location-on" size={24} color="#BFBFBF" style={styles.icon} />
-            <Text 
-              variant="bodyLarge" 
-              style={styles.cardText} 
-              onPress={handleOpenAddress}
-            >
-              Bahçelievler Mh. 5006 Sk. No: 37 Manavgat / Antalya
-            </Text>
-          </View>
-          <View style={styles.contactRow}>
-            <MaterialCommunityIcons name="instagram" size={24} color="#BFBFBF" style={styles.icon} />
-            <Text 
-              variant="bodyLarge" 
-              style={styles.cardText} 
-              onPress={() => handleOpenURL('https://www.instagram.com/da_ilkyardim')}
-            >
-              @da_ilkyardim
-            </Text>
-          </View>
-          <View style={styles.contactRow}>
+      <Surface style={[styles.card]} elevation={2}>
+        <View style={styles.cardWrapper}>
+          <Text variant="titleMedium" style={styles.cardTitle}>Bize Ulaşın</Text>
+          <View style={styles.contentContainer}>
+            <View style={styles.contactRow}>
+              <MaterialIcons name="location-on" size={24} color="#BFBFBF" style={styles.icon} />
+              <Text 
+                variant="bodyLarge" 
+                style={styles.cardText} 
+                onPress={handleOpenAddress}
+              >
+                Bahçelievler Mh. 5006 Sk. No: 37 Manavgat / Antalya
+              </Text>
+            </View>
+            <View style={styles.contactRow}>
+              <MaterialCommunityIcons name="instagram" size={24} color="#BFBFBF" style={styles.icon} />
+              <Text 
+                variant="bodyLarge" 
+                style={styles.cardText} 
+                onPress={() => handleOpenURL('https://www.instagram.com/da_ilkyardim')}
+              >
+                @da_ilkyardim
+              </Text>
+            </View>
+            <View style={styles.contactRow}>
+              <MaterialIcons name="phone" size={24} color="#BFBFBF" style={styles.icon} />
+              <Text 
+                variant="bodyLarge" 
+                style={styles.cardText}
+                onPress={() => handleOpenURL('tel:+905514818058')}
+              >
+                +90 551 481 80 58
+              </Text>
+            </View>
+            <View style={styles.contactRow}>
             <MaterialIcons name="phone" size={24} color="#BFBFBF" style={styles.icon} />
-            <Text 
-              variant="bodyLarge" 
-              style={styles.cardText}
-              onPress={() => handleOpenURL('tel:+905514818058')}
-            >
-              +90 551 481 80 58
-            </Text>
-          </View>
-          <View style={styles.contactRow}>
-          <MaterialIcons name="phone" size={24} color="#BFBFBF" style={styles.icon} />
-             <Text 
-              variant="bodyLarge" 
-              style={styles.cardText}
-              onPress={() => handleOpenURL('tel:+905437764489')}
-            >
-              +90 543 776 44 89
-            </Text>
-           </View>
-          <View style={styles.contactRow}>
-          <MaterialIcons name="email" size={24} color="#BFBFBF" style={styles.icon} />
-            <Text
-              variant="bodyLarge"
-              style={[styles.cardText, { marginBottom: 0 }]}
-               onPress={() => handleOpenURL('mailto:denizantalyailkyardim@gmail.com')}
-               >
-              denizantalyailkyardim@gmail.com{' '}
+               <Text 
+                variant="bodyLarge" 
+                style={styles.cardText}
+                onPress={() => handleOpenURL('tel:+905437764489')}
+              >
+                +90 543 776 44 89
+              </Text>
+             </View>
+            <View style={styles.contactRow}>
+            <MaterialIcons name="email" size={24} color="#BFBFBF" style={styles.icon} />
+              <Text
+                variant="bodyLarge"
+                style={[styles.cardText, { marginBottom: 0 }]}
+                 onPress={() => handleOpenURL('mailto:denizantalyailkyardim@gmail.com')}
+                 >
+                denizantalyailkyardim@gmail.com{' '}
 
-            </Text>
+              </Text>
+            </View>
           </View>
         </View>
       </Surface>
@@ -255,9 +261,13 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 24,
     backgroundColor: '#424549',
-    overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#8C8C8C',
+    marginBottom: 16,
+  },
+  cardWrapper: {
+    overflow: 'hidden',
+    borderRadius: 24,
   },
   cardTitle: {
     color: '#FFFFFF',
