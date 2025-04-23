@@ -35,6 +35,7 @@ export default function Home() {
   const closeModal = () => {
     setIsZoomed(false);
     setModalVisible(false);
+    setModalImage(null);
   };
 
   const handleLogin = () => {
@@ -133,6 +134,7 @@ export default function Home() {
               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
                 <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
                   <ScrollView 
+                    key={modalVisible ? 'modal-open' : 'modal-closed'}
                     maximumZoomScale={2} 
                     minimumZoomScale={1} 
                     contentContainerStyle={{ 
