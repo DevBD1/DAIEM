@@ -1,9 +1,11 @@
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Text, Button, Surface } from 'react-native-paper';
-import * as Linking from 'expo-linking';
+//import * as Linking from 'expo-linking';
 import { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootTabParamList } from '../../types';
+ 
 export default function Classroom() {
   const insets = useSafeAreaInsets();
   const [documentFiles, setDocumentFiles] = useState<string[]>([]);
@@ -23,10 +25,12 @@ export default function Classroom() {
 
     fetchDocumentFiles();
   }, []);
+    const navigation = useNavigation<NavigationProp<RootTabParamList>>();
 
-  const handleOpenDocument = (url: string) => {
-    Linking.openURL(url).catch((err) => console.error('An error occurred:', err));
-  };;
+    const handleOpenDocument = (url: string) => {
+        //Linking.openURL(url).catch((err) => console.error('An error occurred:', err));
+    };
+    const navigateToQuiz = () => navigation.navigate('sub_screens/quiz');
 
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
@@ -57,7 +61,7 @@ export default function Classroom() {
           </Text>
           <Button
             mode="contained" style={[styles.button]} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel}
-            onPress={() => handleOpenDocument('https://www.google.com')}
+            onPress={navigateToQuiz}
           >
             Quiz'e Git
           </Button>

@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, Slot } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import { View, ActivityIndicator } from 'react-native';
@@ -29,8 +29,10 @@ export default function RootLayout() {
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="sub_screens/quiz" />
       </Stack>
+      
     </View>
   );
 } 
