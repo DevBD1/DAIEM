@@ -1,4 +1,4 @@
-import { View, StyleSheet, Linking, Image, Dimensions, ScrollView, Pressable, Modal } from 'react-native';
+import { View, StyleSheet, Linking, Image, Dimensions, ScrollView, Pressable, Modal, Platform } from 'react-native';
 import { Text, Button, Surface } from 'react-native-paper';
 import { useState } from 'react'; // Importing useState
 import React from 'react';
@@ -46,6 +46,22 @@ export default function Home() {
     setIsLoggedIn(false);
   };
 
+  const handleOpenAddress = () => {
+    const address = 'Bahçelievler Mh. 5006 Sk. No: 37 Manavgat / Antalya';
+    const encodedAddress = encodeURIComponent(address);
+    
+    if (Platform.OS === 'ios') {
+      // Open Apple Maps
+      Linking.openURL(`maps://?q=${encodedAddress}`).catch(() => {
+        // Fallback to Apple Maps website if the app is not installed
+        Linking.openURL(`https://maps.apple.com/?q=${encodedAddress}`);
+      });
+    } else {
+      // Open Google Maps
+      Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`);
+    }
+  };
+
   return (
     <ScrollView style={[styles.container, { paddingTop: insets.top }]} contentContainerStyle={styles.scrollViewContent}>
       {/*<Text variant="headlineMedium" style={[styles.title, {marginBottom: 12}]}>
@@ -75,12 +91,12 @@ export default function Home() {
                   style={[styles.button, { flex: 1, marginRight: 8 }]}
                   contentStyle={styles.buttonContent}
                   labelStyle={styles.buttonLabel}
-                  onPress={() => handleOpenURL('https://www.google.com/maps/search/?api=1&query=Bah%C3%A7elievler+Mh.+5006+Sk.+No:+37+Manavgat+%2F+Antalya')}
+                  onPress={handleOpenAddress}
                 >
-                    Adresimiz
+                  Adresimiz
                 </Button>
-                <Button mode="contained" style={[styles.button, { flex: 1 }]} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogin}> Giriş Yap
-                
+                <Button mode="contained" style={[styles.button, { flex: 1 }]} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogin}>
+                  Giriş Yap
                 </Button>
               </View>
 
@@ -156,7 +172,7 @@ export default function Home() {
             <Text 
               variant="bodyLarge" 
               style={styles.cardText} 
-              onPress={() => handleOpenURL('https://www.google.com/maps/search/?api=1&query=Bah%C3%A7elievler+Mh.+5006+Sk.+No:+37+Manavgat+%2F+Antalya')}
+              onPress={handleOpenAddress}
             >
               Bahçelievler Mh. 5006 Sk. No: 37 Manavgat / Antalya
             </Text>
