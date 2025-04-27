@@ -23,16 +23,16 @@ export default function Settings() {
       <Surface style={[styles.card]} elevation={2}>
         <View style={styles.cardWrapper}>
           <Text variant="titleLarge" style={styles.cardTitle}>Bildirimler</Text>
-          <View style={styles.contentContainer}>
-            <View style={styles.settingRow}>
+        <View style={styles.contentContainer}>
+          <View style={styles.settingRow}>
               <Text variant="titleMedium" style={[styles.cardText, { marginBottom: 0 }]}>
                 Bildirim İzinleri
-              </Text>
-              <Switch
-                value={notifications}
-                onValueChange={setNotifications}
+            </Text>
+            <Switch
+              value={notifications}
+              onValueChange={setNotifications}
                 color="#7289da"
-              />
+            />
             </View>
           </View>
         </View>

@@ -1,7 +1,12 @@
-import { View, StyleSheet, Linking, Image, Dimensions, ScrollView, Pressable, Modal, Platform } from 'react-native';
-import { Text, Button, Surface } from 'react-native-paper';
-import { useState } from 'react'; // Importing useState
 import React from 'react';
+import { useState, useEffect } from 'react'; // Add useEffect
+import { View, StyleSheet, Linking, Image, Dimensions, ScrollView, Pressable, Modal, Platform, Alert } from 'react-native';
+import { Text, Button, Surface } from 'react-native-paper';
+import { router } from 'expo-router';
+import { Link } from 'expo-router';
+import { useAuth } from '../(pages)/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -10,21 +15,51 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function Home() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock login state
+  const { isAuthenticated, logout, user } = useAuth();
   const insets = useSafeAreaInsets();
   const [isZoomed, setIsZoomed] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [questionsAnswered, setQuestionsAnswered] = useState(0);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadQuestionsAnswered = async () => {
+      try {
+        const answered = await AsyncStorage.getItem('questionsAnswered');
+        setQuestionsAnswered(answered ? parseInt(answered) : 0);
+      } catch (error) {
+        console.error('Error loading questions answered:', error);
+      }
+    };
+
+    const loadProfileImage = async () => {
+      try {
+        const savedImage = await AsyncStorage.getItem('userProfileImage');
+        if (savedImage) {
+          setProfileImage(savedImage);
+        }
+      } catch (error) {
+        console.error('Error loading profile image:', error);
+      }
+    };
+
+    if (isAuthenticated) {
+      loadQuestionsAnswered();
+      loadProfileImage();
+    }
+  }, [isAuthenticated]);
 
   const handleOpenURL = (url: string) => {
     Linking.openURL(url).catch((err) => console.error('An error occurred', err));
   };
 
   const carouselImages = [
-    require('../../assets/carousel/facility.jpeg'),
-    require('../../assets/carousel/door.jpeg'),
-    require('../../assets/carousel/classroom.jpeg'),
-    require('../../assets/carousel/dolls.jpeg'),
+    require('../../assets/media/facility.jpeg'),
+    require('../../assets/media/door.jpeg'),
+    require('../../assets/media/classroom.jpeg'),
+    require('../../assets/media/dolls.jpeg'),
   ];
+
   const [modalImage, setModalImage] = useState(null);
   
   const handleImagePress = (index: number) => {
@@ -32,19 +67,19 @@ export default function Home() {
     setModalImage(carouselImages[index] || undefined);
     setModalVisible(true);
   };
+
   const closeModal = () => {
     setIsZoomed(false);
     setModalVisible(false);
     setModalImage(null);
   };
 
-  const handleLogin = () => {
-    // Navigate to login page (not yet implemented)
-    console.log('Login button pressed');
-  };
-  
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const handleOpenAddress = () => {
@@ -63,37 +98,47 @@ export default function Home() {
     }
   };
 
-  return (
-    <ScrollView 
-      style={styles.container} 
-      contentContainerStyle={[
-        styles.scrollViewContent, 
-        { 
-          paddingTop: 40,
-          paddingBottom: 8
-        }
-      ]}
-    >
-      {/*<Text variant="headlineMedium" style={[styles.title, {marginBottom: 12}]}>
-        Deniz Antalya İlk Yardım Eğitim Merkezi
-      </Text>*/}
+  const pickImageAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
 
-      <Surface style={[styles.card]} elevation={2}>
+    if (!result.canceled) {
+      setProfileImage(result.assets[0].uri);
+      await AsyncStorage.setItem('userProfileImage', result.assets[0].uri);
+    } else {
+      console.log('You did not select any image.');
+    }
+  };
+
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContent}>
+      <Surface style={styles.card} elevation={2}>
         <View style={styles.cardWrapper}>
-          <Text variant="titleLarge" style={styles.cardTitle}>
-            {isLoggedIn ? 'Kullanıcı Bilgileri' : 'Bize Katıl'}
+          <Text variant="titleMedium" style={styles.cardTitle}>
+            {isAuthenticated ? 'Kullanıcı Bilgileri' : 'Bize Katılın'}
           </Text>
-          {!isLoggedIn && <Text style={[styles.infoText,{paddingLeft:10,paddingTop:10}]}>Eğitim için dersleri inceleyebilir, kayıt için bize ulaşabilirsiniz.</Text>}
+            {!isAuthenticated && <Text style={[styles.infoText]}>Eğitim için dersleri inceleyebilir, kayıt için bize ulaşabilirsiniz.</Text>}
           <View style={styles.contentContainer}>
-            {isLoggedIn ? (
-              <>
-                <Image source={require('../../assets/icon.png')} style={styles.profileImage} />
-                <Text variant="bodyLarge" style={styles.cardText}>Ad: John</Text>
-                <Text variant="bodyLarge" style={styles.cardText}>Soyad: Doe</Text>
-                <Button mode="contained" style={styles.button} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogout}>
-                  Çıkış Yap
-                </Button>
-              </>
+            {isAuthenticated ? (
+              <View style={styles.userInfoContainer}>
+                <View style={styles.userTextInfo}>
+                  <Text variant="bodyLarge" style={styles.cardText}>TCKN: {user?.tckn || '-'}</Text>
+                  <Text variant="bodyLarge" style={styles.cardText}>Cevaplanan Soru: {questionsAnswered}</Text>
+                </View>
+                <Pressable onPress={pickImageAsync}>
+                  <Image 
+                    source={profileImage ? { uri: profileImage } : require('../../assets/profile.png')} 
+                    style={styles.profileImage} 
+                  />
+                  <View style={styles.profileImageOverlay}>
+                    <MaterialIcons name="photo-camera" size={20} color="#FFFFFF" />
+                  </View>
+                </Pressable>
+              </View>
             ) : (
               <>
                 <View style={styles.buttonContainer}>
@@ -106,11 +151,24 @@ export default function Home() {
                   >
                     Adresimiz
                   </Button>
-                  <Button mode="contained" style={[styles.button, { flex: 1 }]} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel} onPress={handleLogin}>
-                    Giriş Yap
-                  </Button>
+                  <Link href="/(pages)/login" asChild>
+                    <Button mode="contained" style={styles.button} contentStyle={styles.buttonContent} labelStyle={styles.buttonLabel}>
+                      Giriş / Kayıt
+                    </Button>
+                  </Link>
                 </View>
               </>
+            )}
+            {isAuthenticated && (
+              <Button 
+                mode="contained" 
+                style={styles.button} 
+                contentStyle={styles.buttonContent} 
+                labelStyle={styles.buttonLabel} 
+                onPress={handleLogout}
+              >
+                Çıkış Yap
+              </Button>
             )}
           </View>
         </View>
@@ -162,7 +220,7 @@ export default function Home() {
                       source={modalImage as any} 
                       style={[
                         {
-                          width: isZoomed ? screenWidth * 0.9 : screenWidth, 
+                          width: isZoomed ? screenWidth * 0.94 : screenWidth, 
                           height: isZoomed ? screenWidth : 200, 
                           resizeMode: 'contain', 
                           marginHorizontal: isZoomed ? 10 : 0
@@ -181,57 +239,62 @@ export default function Home() {
         <View style={styles.cardWrapper}>
           <Text variant="titleMedium" style={styles.cardTitle}>Bize Ulaşın</Text>
           <View style={styles.contentContainer}>
+            
             <View style={styles.contactRow}>
-              <MaterialIcons name="location-on" size={24} color="#BFBFBF" style={styles.icon} />
+              <MaterialIcons name="location-on" size={20} color="#7289da" style={styles.icon} />
               <Text 
-                variant="bodyLarge" 
+                variant="bodyMedium" 
                 style={styles.cardText} 
                 onPress={handleOpenAddress}
               >
                 Bahçelievler Mh. 5006 Sk. No: 37 Manavgat / Antalya
               </Text>
             </View>
+
             <View style={styles.contactRow}>
-              <MaterialCommunityIcons name="instagram" size={24} color="#BFBFBF" style={styles.icon} />
+              <MaterialCommunityIcons name="instagram" size={20} color="#e56969" style={styles.icon} />
               <Text 
-                variant="bodyLarge" 
+                variant="bodyMedium" 
                 style={styles.cardText} 
                 onPress={() => handleOpenURL('https://www.instagram.com/da_ilkyardim')}
               >
                 @da_ilkyardim
               </Text>
             </View>
+
             <View style={styles.contactRow}>
-              <MaterialIcons name="phone" size={24} color="#BFBFBF" style={styles.icon} />
+              <MaterialIcons name="phone" size={20} color="#BFBFBF" style={styles.icon} />
               <Text 
-                variant="bodyLarge" 
+                variant="bodyMedium" 
                 style={styles.cardText}
                 onPress={() => handleOpenURL('tel:+905514818058')}
               >
                 +90 551 481 80 58
               </Text>
             </View>
+
             <View style={styles.contactRow}>
-            <MaterialIcons name="phone" size={24} color="#BFBFBF" style={styles.icon} />
+            <MaterialIcons name="phone" size={20} color="#BFBFBF" style={styles.icon} />
                <Text 
-                variant="bodyLarge" 
+                variant="bodyMedium" 
                 style={styles.cardText}
                 onPress={() => handleOpenURL('tel:+905437764489')}
               >
                 +90 543 776 44 89
               </Text>
              </View>
+
             <View style={styles.contactRow}>
-            <MaterialIcons name="email" size={24} color="#BFBFBF" style={styles.icon} />
+            <MaterialIcons name="email" size={20} color="#BFBFBF" style={styles.icon} />
               <Text
-                variant="bodyLarge"
+                variant="bodyMedium"
                 style={[styles.cardText, { marginBottom: 0 }]}
                  onPress={() => handleOpenURL('mailto:denizantalyailkyardim@gmail.com')}
                  >
                 denizantalyailkyardim@gmail.com{' '}
-
               </Text>
             </View>
+
           </View>
         </View>
       </Surface>
@@ -243,20 +306,73 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 8,
     backgroundColor: '#282b30',
-  },
-  title: {
-    color: '#FFFFFF',
-    textAlign: 'left',
-    fontSize: 16,
   },
   scrollViewContent: {
     paddingTop: 0,
-    paddingBottom: 12,
+    paddingBottom: 0,
   },
   infoText: {
+    paddingTop: 10,
+    paddingLeft: 10,
     color: '#FFFFFF'
+  },
+  link: {
+    color: 'lightblue',
+    textDecorationLine: 'underline',
+    backgroundColor: '#424549',
+    padding: 10,
+    fontSize: 20,
+    textAlign:'center',
+  },
+  contentContainer: {
+    padding: 10,
+  },
+  userInfoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 16,
+  },
+  userTextInfo: {
+    flex: 1,
+    marginRight: 16,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  profileImageOverlay: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 12,
+    padding: 4,
+  },
+  button: {
+    marginTop: 0,
+    backgroundColor: '#7289da',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  buttonContent: {
+    height: 40,
+  },
+  buttonLabel: {
+    fontSize: 14,
+    letterSpacing: 0.5,
+    color: '#FFFFFF',
+  },
+  carouselImage: {
+    width: screenWidth,
+    height: 200,
+    resizeMode: 'cover',
   },
   card: {
     borderRadius: 24,
@@ -272,42 +388,15 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: '#FFFFFF',
     backgroundColor: '#7289da',
-    padding: 6,
-    fontSize: 20,
+    padding: 4,
+    fontSize: 18,
     textAlign: 'center',
-  },
-  link: {
-    color: 'lightblue',
-    textDecorationLine: 'underline',
-    backgroundColor: '#424549',
-    padding: 10,
-    fontSize: 20,
-    textAlign:'center',
-  },
-  contentContainer: {
-    padding: 10,
   },
   cardText: {
     marginBottom: 0,
     color: '#FFFFFF',
     lineHeight: 20,
-    fontSize: 14,
-  },
-  button: {
-    marginTop: 4,
-    backgroundColor: '#7289da',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  buttonContent: {
-    height: 40,
-  },
-  buttonLabel: {
-    fontSize: 14,
-    letterSpacing: 0.5,
-    color: '#FFFFFF',
+    fontSize: 12,
   },
   contactRow: {
     flexDirection: 'row',
@@ -317,20 +406,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
-    width: 24,
+    width: 20,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  carouselImage: {
-    width: screenWidth,
-    height: 200,
-    resizeMode: 'cover',
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 10,
+    color: '#FFFFFF',
   },
 
 });
