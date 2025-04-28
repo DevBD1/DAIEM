@@ -2,11 +2,9 @@ import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Text, Button, Surface } from 'react-native-paper';
 import { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { useAuth } from '../(pages)/AuthContext';
-// @ts-ignore
-import { RootTabParamList } from '../../types';
+
 
 interface DocumentFile {
   id: string;
@@ -14,16 +12,21 @@ interface DocumentFile {
   fileName: string;
 }
 
+const FILE_LIST_URL = 'https://raw.githubusercontent.com/DenizAntalya/DAIEM_DB/main/quiz_questions.json';
+
 export default function Classroom() {
   const insets = useSafeAreaInsets();
   const [documentFiles, setDocumentFiles] = useState<DocumentFile[]>([]);
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    // Only fetch documents if authenticated
-    if (isAuthenticated) {
+    const fetchClassroomData = async () => {
+      if (!isAuthenticated) {
+        setDocumentFiles([]);
+        return;
+      }
       const fetchDocumentFiles = async () => {
-        const fileList: DocumentFile[] = [
+        const fileList : DocumentFile[] = [
           {
             id: '1',
             displayName: 'Genel İlk Yardım Bilgileri',
@@ -113,36 +116,41 @@ export default function Classroom() {
         setDocumentFiles(fileList);
       };
 
-      fetchDocumentFiles();
-    }
+      try {
+        await fetchDocumentFiles();
+      }
+      catch(e){
+        console.error(e);
+      }
+    };
+    
+    fetchClassroomData();
   }, [isAuthenticated]);
 
-  // If not authenticated, render only a login card
-  if (!isAuthenticated) {
-    return (
-      <View style={[styles.container, { justifyContent: 'center', flex: 1, paddingHorizontal: 16 }]}> 
-        <Surface style={[styles.card]} elevation={2}>
-          <View style={styles.cardWrapper}>
-            <Text variant="titleLarge" style={styles.cardTitle}>Giriş Gerekli</Text>
-            <View style={styles.contentContainer}>
-              <Text variant="bodyMedium" style={styles.cardText}>
-                Derslere erişmek için giriş yapmanız gerekmektedir.
-              </Text>
-              <Button
-                mode="contained"
-                style={[styles.button, { marginTop: 16 }]}
-                contentStyle={styles.buttonContent}
-                labelStyle={styles.buttonLabel}
-                onPress={() => router.push('/(pages)/login')}
-              >
-                Giriş Yap
-              </Button>
-            </View>
+
+  const renderLoginCard = () => (
+    <View style={[styles.container, { justifyContent: 'center', flex: 1, paddingHorizontal: 16 }]}>
+      <Surface style={[styles.card]} elevation={2}>
+        <View style={styles.cardWrapper}>
+          <Text variant="titleLarge" style={styles.cardTitle}>Giriş Gerekli</Text>
+          <View style={styles.contentContainer}>
+            <Text variant="bodyMedium" style={styles.cardText}>
+              Derslere erişmek için giriş yapmanız gerekmektedir.
+            </Text>
+            <Button
+              mode="contained"
+              style={[styles.button, { marginTop: 16 }]}
+              contentStyle={styles.buttonContent}
+              labelStyle={styles.buttonLabel}
+              onPress={() => router.push('/(pages)/login')}
+            >
+              Giriş Yap
+            </Button>
           </View>
-        </Surface>
-      </View>
-    );
-  }
+        </View>
+      </Surface>
+    </View>
+  );
 
   const handleOpenDocument = async (document: DocumentFile) => {
     try {
@@ -159,9 +167,12 @@ export default function Classroom() {
     }
   };
 
-  const navigation = useNavigation<NavigationProp<RootTabParamList>>();
   const navigateToQuiz = () => router.push('/(pages)/quiz');
 
+  if(!isAuthenticated){
+    return renderLoginCard();
+  }
+  
   return (
     <ScrollView 
       style={styles.container} 
