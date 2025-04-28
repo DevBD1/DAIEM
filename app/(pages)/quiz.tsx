@@ -285,7 +285,7 @@ export default function QuizScreen() {
                   title={option}
                   left={() => <RadioButton value={index.toString()} />}
                    
-                   titleStyle={styles.optionText}
+                   titleStyle={[styles.optionText]}
                  />
              ))}
           </RadioButton.Group>
@@ -388,10 +388,11 @@ const styles = StyleSheet.create({
   optionText: {
     color: '#FFFFFF',  
     flex:1,  
-    
+    fontSize:14
   },
   loadingText: {
     color: '#FFFFFF',
+    paddingHorizontal:10,
     marginTop: 16,
     textAlign: 'center',
   },
