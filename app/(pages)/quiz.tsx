@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
-import { Surface, Text, IconButton, Button, RadioButton } from 'react-native-paper';
+import { Surface, Text, Button, RadioButton, IconButton, List, } from 'react-native-paper';
 import { router } from 'expo-router';
 
 interface Question {
   question: string;
   options: string[];
   answer: number;
+  setId: number;
 }
 
-interface QuizData {
-  [key: string]: Question[];
+interface QuestionSet {
+  title: string;
+  qlist: Question[];
 }
+
+interface QuizData {[key: string]: QuestionSet;
+}
+
+
+
 
 export default function QuizScreen() {
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [quizTitle, setQuizTitle] = useState<string>('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -22,86 +31,132 @@ export default function QuizScreen() {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null); 
+  const [selectedSetId, setSelectedSetId] = useState<number | null>(null); 
+  const [quizSets, setQuizSets] = useState<{ id: number; title: string }[]>([]);
+
 
   useEffect(() => {
     fetchQuizQuestions();
+
   }, []);
 
   const fetchQuizQuestions = async () => {
-    try {
+    try {      
       setIsLoading(true);
       setError(null);
       const response = await fetch('https://raw.githubusercontent.com/DenizAntalya/DAIEM_DB/main/quiz_questions.json');
-      
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);        
       }
 
-      const text = await response.text();
-      
-      // Clean the JSON by adding missing commas
-      const cleanedText = text.replace(/"question":\s*"([^"]*)"\s*"options"/g, '"question": "$1", "options"');
-      
-      let data: QuizData;
-      
-      try {
-        // Try to parse the cleaned JSON
-        data = JSON.parse(cleanedText);
-      } catch (parseError) {
-        console.error('JSON Parse Error:', parseError);
-        console.error('Cleaned text:', cleanedText);
-        throw new Error('Invalid JSON format in response');
+      const data: QuizData = await response.json();     
+       // Process quiz sets
+      const sets: { id: number; title: string }[] = [];
+      for (const setId in data) {
+        const questionSet = data[setId];
+        if (questionSet && typeof questionSet.title === 'string') {
+          sets.push({ id: parseInt(setId), title: questionSet.title });
+        }
       }
+      setQuizSets(sets);
 
-      // Validate the data structure
-      if (!data || typeof data !== 'object') {
-        throw new Error('Invalid data format');
+      const allQuestions: Question[] = [];
+      for (const setId in data) {
+        const questionSet = data[setId];
+        
+        if (questionSet && Array.isArray(questionSet.qlist)) {
+          questionSet.qlist.forEach(question => {
+            allQuestions.push({ ...question, setId: parseInt(setId) });
+          });
+        }
       }
-
-      // Flatten all questions from different categories into one array
-      const allQuestions = Object.values(data).flat();
       
-      if (!Array.isArray(allQuestions) || allQuestions.length === 0) {
+     
+
+      if (allQuestions.length === 0) {
         throw new Error('No valid questions found in the database');
       }
+      
 
-      // Validate each question
-      const validQuestions = allQuestions.filter(question => 
-        question && 
-        typeof question === 'object' &&
-        typeof question.question === 'string' &&
-        Array.isArray(question.options) &&
-        typeof question.answer === 'number'
-      );
+      // Validate questionSet
+      const validQuestions = allQuestions.filter(question => {
+        return question &&
+               typeof question.question === 'string' &&
+               Array.isArray(question.options) &&
+               typeof question.answer === 'number' &&
+               typeof question.setId === 'number';
+              
+      });
 
       if (validQuestions.length === 0) {
         throw new Error('No valid questions found after validation');
       }
 
-      setQuestions(validQuestions);
+      let filteredQuestions: Question[] = [];
+      // Filter questions based on selected set ID or all if none is selected
+       if (selectedSetId !== null) {        
+        const selectedSet = sets.find(set => set.id === selectedSetId);
+         if(selectedSet){
+            setQuizTitle(selectedSet.title);
+         }
+         else{
+           setQuizTitle('');
+         }        
+        filteredQuestions = validQuestions.filter(question => question.setId === selectedSetId);        
+      }
+      else{
+        setQuizTitle('');
+        filteredQuestions =[];
+        }
+     
+      setQuestions(filteredQuestions);      
     } catch (error) {
       console.error('Error fetching quiz questions:', error);
-      setError('Soru verileri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+      setError('Soru verileri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.');      
     } finally {
       setIsLoading(false);
+     
     }
+  };
+   const handleSetSelect = (setId: number) => {
+    setSelectedSetId(setId);
+    setQuizStarted(false);
+    fetchQuizQuestions()
+    
   };
 
   const handleStartQuiz = () => {
-    setQuizStarted(true);
-    setCurrentQuestionIndex(0);
-    setScore(0);
-    setQuizCompleted(false);
-  };
+    if (questions.length > 0) {
+      setQuizStarted(true);
+      setCurrentQuestionIndex(0);
+      setScore(0);
+      setQuizCompleted(false);
+    } else {
+       setError('Lütfen bir test seçin.');
+      
+    }
+  }
 
   const handleAnswerSelect = (index: number) => {
     setSelectedAnswer(index);
   };
 
-  const handleNextQuestion = () => {
-    if (selectedAnswer === questions[currentQuestionIndex].answer) {
+  const handleNextQuestion = async () => {
+    const currentQuestion = questions[currentQuestionIndex];
+    const correctAnswer = selectedAnswer === currentQuestion.answer;
+
+    setIsCorrect(correctAnswer);
+    setShowFeedback(true);
+
+    if (correctAnswer) {
       setScore(score + 1);
     }
+
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
+    setShowFeedback(false);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -136,13 +191,38 @@ export default function QuizScreen() {
       );
     }
 
-    if (!quizStarted) {
+
+   if (!quizStarted) {
       return (
         <Surface style={styles.surface} elevation={4}>
-          <Text variant="headlineMedium" style={styles.surfaceText}>
-            İlk Yardım Bilgi Testi
+             {quizSets.length > 0 ? (
+              <>
+            <Text variant="headlineMedium" style={styles.surfaceText}>
+           Test Seç
           </Text>
-          <Text style={styles.description}>
+               
+              {quizSets.map(set => (
+              
+                 <List.Item
+                   key={set.id}
+                  title={set.title}
+                  onPress={() => handleSetSelect(set.id)}
+                  style={{backgroundColor: selectedSetId === set.id ? '#53565A' : 'transparent',}}
+                  titleStyle={{ color: '#FFFFFF' }}
+                />
+               
+              ))}
+             </>
+             ) : (
+                <Text style={styles.loadingText}>Testler yükleniyor...</Text>
+             )}
+           
+        
+          
+          
+        
+        <Text variant="headlineMedium" style={styles.surfaceText}>{quizTitle}</Text>
+         <Text style={styles.description}>
             Bu test, genel ilk yardım prosedürleri hakkındaki bilginizi ölçecektir.
           </Text>
           <Button
@@ -176,41 +256,66 @@ export default function QuizScreen() {
       );
     }
 
+
     const currentQuestion = questions[currentQuestionIndex];
 
+
     return (
-      <Surface style={styles.surface} elevation={4}>
-        <Text variant="titleLarge" style={styles.questionNumber}>
-          Soru {currentQuestionIndex + 1}/{questions.length}
-        </Text>
-        <Text variant="headlineSmall" style={styles.questionText}>
-          {currentQuestion.question}
-        </Text>
-        <RadioButton.Group
-          onValueChange={(value) => handleAnswerSelect(parseInt(value))}
-          value={selectedAnswer?.toString() || ''}
-        >
-          {currentQuestion.options.map((option, index) => (
-            <View key={index} style={styles.optionContainer}>
-              <RadioButton value={index.toString()} />
-              <Text style={styles.optionText}>{option}</Text>
-            </View>
-          ))}
-        </RadioButton.Group>
-        <Button
-          mode="contained"
-          onPress={handleNextQuestion}
-          style={styles.button}
-          disabled={selectedAnswer === null}
-        >
-          {currentQuestionIndex === questions.length - 1 ? 'Testi Bitir' : 'Sonraki Soru'}
-        </Button>
-      </Surface>
+      <>
+        <Surface style={[styles.surface, styles.questionCard]} elevation={4}>
+          <Text variant="titleLarge" style={styles.questionNumber}>
+            Soru {currentQuestionIndex + 1}/{questions.length}
+          </Text>
+          <Text variant="headlineSmall" style={styles.questionText}>
+            {currentQuestion.question}
+          </Text>
+
+        </Surface>
+        <Surface style={[styles.surface, styles.answerCard]} elevation={4}>
+
+
+          <RadioButton.Group
+            onValueChange={(value) => handleAnswerSelect(parseInt(value))}
+            value={selectedAnswer?.toString() || ''}
+          >
+            {currentQuestion.options.map((option, index) => (
+              <View key={index} style={styles.optionContainer} >
+                <RadioButton value={index.toString()} />
+                <Text style={styles.optionText}>{option}</Text>
+              </View>
+            ))}
+          </RadioButton.Group>
+          <Button
+
+            disabled={showFeedback}
+            mode="contained"
+
+            onPress={handleNextQuestion}
+            style={styles.button}
+          >
+            {currentQuestionIndex === questions.length - 1 ? 'Testi Bitir' : 'Sonraki Soru'}
+          </Button>
+
+          {showFeedback && (
+            <Text style={isCorrect ? styles.correctText : styles.incorrectText}>
+              {isCorrect ? 'Doğru!' : 'Yanlış!'}
+            </Text>)}
+        </Surface>
+      </>
+
     );
   };
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <IconButton
+          icon="arrow-left"
+          size={30}
+          iconColor='#FFFFFF'
+          onPress={() => router.push('/(tabs)/classroom')}
+        />
+      </View>
       <ScrollView>
         {renderQuizContent()}
       </ScrollView>
@@ -224,12 +329,26 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#282b30',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  questionCard:{
+    backgroundColor: '#53565A',    
+    padding: 16,
+  },
+  answerCard: {
+    padding: 16,
+  },
   surface: {
-    padding: 24,
+    
+    padding: 16,
     borderRadius: 24,
     backgroundColor: '#424549',
     borderWidth: 1,
-    borderColor: '#8C8C8C',
+    borderColor: '#8C8C8C',    
+    
     marginTop: 16,
     alignItems: 'center',
     justifyContent: 'center',
@@ -266,6 +385,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginLeft: 8,
     flex: 1,
+
   },
   loadingText: {
     color: '#FFFFFF',
@@ -277,4 +397,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
   },
-}); 
+
+  correctText: {
+    color: '#4CAF50',
+    fontSize: 24,
+    marginTop: 16
+  },
+  incorrectText: {
+    color: '#F44336',    
+    fontSize: 24,
+  },
+  picker: {
+    color: '#FFFFFF',
+    marginBottom: 16,
+    width: '80%',
+    
+  },
+  pickerItem: {
+    color: '#FFFFFF',
+  },
+});

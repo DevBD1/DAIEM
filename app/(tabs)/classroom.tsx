@@ -15,9 +15,9 @@ interface DocumentFile {
 }
 
 export default function Classroom() {
-  const { isAuthenticated } = useAuth();
   const insets = useSafeAreaInsets();
   const [documentFiles, setDocumentFiles] = useState<DocumentFile[]>([]);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     // Only fetch documents if authenticated

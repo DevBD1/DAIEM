@@ -21,7 +21,6 @@ export default function TabsLayout() {
           backgroundColor: '#1e2124',
           height: 110,
         },
-//
         tabBarActiveTintColor: '#7289da',
         tabBarInactiveTintColor: '#8C8C8C',
         tabBarShowLabel: false,
@@ -71,7 +70,7 @@ export default function TabsLayout() {
           )
         }}
       />
-      <Tabs.Screen
+      {/*<Tabs.Screen
         name="settings"
         options={{
           tabBarIcon: ({ color }: { color: string }) => ( 
@@ -80,7 +79,7 @@ export default function TabsLayout() {
             </View>
           )
         }}
-      />
+      />*/}
     </Tabs>
   );
 }
