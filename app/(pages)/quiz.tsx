@@ -279,11 +279,15 @@ export default function QuizScreen() {
             value={selectedAnswer?.toString() || ''}
           >
             {currentQuestion.options.map((option, index) => (
-              <View key={index} style={styles.optionContainer} >
-                <RadioButton value={index.toString()} />
-                <Text style={styles.optionText}>{option}</Text>
-              </View>
-            ))}
+              
+                 <List.Item
+                  key={index}
+                  title={option}
+                  left={() => <RadioButton value={index.toString()} />}
+                   style={styles.optionContainer}
+                   titleStyle={styles.optionText}
+                 />
+             ))}
           </RadioButton.Group>
           <Button
 
@@ -382,10 +386,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   optionText: {
-    color: '#FFFFFF',
-    marginLeft: 8,
-    flex: 1,
-
+    color: '#FFFFFF',    
+   
+   
   },
   loadingText: {
     color: '#FFFFFF',
