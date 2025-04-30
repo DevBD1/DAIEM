@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { User } from '../types/user';
+import { User } from '../../types/user';
 
 const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/DenizAntalya/DAIEM_DB/main/users.json';
 const AUTH_STORAGE_KEY = '@auth_user';
