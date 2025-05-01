@@ -20,7 +20,8 @@
       "bundleIdentifier": "com.daiem.app",
       "infoPlist": {
         "NSDocumentsDirectoryUsageDescription": "This app needs access to documents directory to store theme preferences.",
-        "NSPhotoLibraryUsageDescription": "This app needs access to photos."
+        "NSPhotoLibraryUsageDescription": "This app needs access to photos.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -41,6 +42,11 @@
       "expo-router",
       "expo-font"
     ],
-    "scheme": "daiem"
+    "scheme": "daiem",
+    "extra": {
+      "eas": {
+        "projectId": "49097931-bbe1-4d1c-b172-eb4767f38960"
+      }
+    }
   }
 }

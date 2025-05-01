@@ -165,15 +165,12 @@ export const styles = StyleSheet.create({
     marginBottom: 4,
     paddingVertical: 8,
   },
-  documentPressable: {
-    borderWidth: 1,
-    borderColor: "#8C8C8C",
-    padding: 12,
-    marginBottom: 8,
-    borderRadius: 8,
-  },
-  documentPressablePressed: {
-    backgroundColor: "#363940",
+  documentButton: {
+    marginTop: 8,
+    backgroundColor: "#7289da",
+    width: "100%",
+    borderRadius: 4,
+    paddingVertical: 0,
   },
   // QUIZ
   questionCard: {

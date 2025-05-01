@@ -1,7 +1,6 @@
-import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, ScrollView } from "react-native";
 import { Text, Button, Surface } from "react-native-paper";
-import { useEffect, useState } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { useAuth } from "../../components/authContext";
 import { styles } from "../../components/styles";
@@ -12,11 +11,7 @@ interface DocumentFile {
   fileName: string;
 }
 
-const FILE_LIST_URL =
-  "https://raw.githubusercontent.com/DenizAntalya/DAIEM_DB/main/quiz_questions.json";
-
 export default function Classroom() {
-  const insets = useSafeAreaInsets();
   const [documentFiles, setDocumentFiles] = useState<DocumentFile[]>([]);
   const { isAuthenticated } = useAuth();
 
@@ -41,80 +36,71 @@ export default function Classroom() {
           {
             id: "3",
             displayName: "Acil Taşıma Teknikleri",
-            fileName: "03_acil_tasima_teknikleri.pdf",
+            fileName: "document.03_acil_tasima_teknikleri.pdf",
           },
           {
             id: "4",
             displayName: "OED Kullanımı",
-            fileName: "04_oed_kullanimi.pdf",
+            fileName: "document.04_oed_ve_tyd.pdf",
           },
           {
             id: "5",
-            displayName: "Erişkinlerde Temel Yaşam Desteği",
-            fileName: "05-1_eriskinlerde_tyd.pdf",
+            displayName: "Havayolu Tıkanıklığı",
+            fileName: "document.05_havayolu_tikanikliginda_ilkyardim.pdf",
           },
           {
             id: "6",
-            displayName: "Çocuklarda Temel Yaşam Desteği",
-            fileName: "05-2_cocuklarda_tyd.pdf",
+            displayName: "Bilinç Bozuklukları ve Ciddi Hastalıklar",
+            fileName:
+              "document.06_bilinc_bozukluklarinda_ve_ciddi_hastaliklarda_ilkyardim.pdf",
           },
           {
             id: "7",
-            displayName: "Havayolu Tıkanıklığı",
-            fileName: "06_havayolu_tikanikliginda_ilkyardim.pdf",
+            displayName: "Kanamalar",
+            fileName: "document.07_kanamalarda_ilkyardim.pdf",
           },
           {
             id: "8",
-            displayName: "Bilinç Bozuklukları ve Ciddi Hastalıklar",
-            fileName:
-              "07_bilinc_bozukluklarinda_ve_ciddi_hastaliklarda_ilkyardim.pdf",
+            displayName: "Şok ve Göğüs Ağrısı",
+            fileName: "document.08_sok_ve_gogus_agrisinda_ilkyardim.pdf",
           },
           {
             id: "9",
-            displayName: "Kanamalar",
-            fileName: "08_kanamalarda_ilkyardim.pdf",
+            displayName: "Yaralanmalar",
+            fileName: "document.09_yaralanmalarda_ilkyardim.pdf",
           },
           {
             id: "10",
-            displayName: "Şok ve Göğüs Ağrısı",
-            fileName: "09_sok_ve_gogus_agrisinda_ilkyardim.pdf",
+            displayName: "Boğulmalar",
+            fileName: "document.10_bogulmalarda_ilkyardim.pdf",
           },
           {
             id: "11",
-            displayName: "Yaralanmalar",
-            fileName: "10_yaralanmalarda_ilkyardim.pdf",
+            displayName: "Kırık, Çıkık ve Burkulmalar",
+            fileName: "document.11_kirik_cikik_ve_burkulmalarda_ilkyardim.pdf",
           },
           {
             id: "12",
-            displayName: "Boğulmalar",
-            fileName: "11_bogulmalarda_ilkyardim.pdf",
+            displayName: "Böcek ve Hayvan Isırıkları",
+            fileName:
+              "document.12_bocek_sokmalari_ve_hayvan_isiriklarinda_ilkyardim.pdf",
           },
           {
             id: "13",
-            displayName: "Kırık, Çıkık ve Burkulmalar",
-            fileName: "12_kirik_cikik_ve_burkulmalarda_ilkyardim.pdf",
+            displayName: "Zehirlenmeler",
+            fileName: "document.13_zehirlenmelerde_ilkyardim.pdf",
           },
           {
             id: "14",
-            displayName: "Böcek ve Hayvan Isırıkları",
+            displayName: "Yanık, Soğuk ve Sıcak Acilleri",
             fileName:
-              "13_bocek_sokmalari_ve_hayvan_isiriklarinda_ilkyardim.pdf",
+              "document.14_yanik_soguk_ve_sicak_acillerinde_ilkyardim.pdf",
           },
           {
             id: "15",
-            displayName: "Zehirlenmeler",
-            fileName: "14_zehirlenmelerde_ilkyardim.pdf",
-          },
-          {
-            id: "16",
-            displayName: "Yanık, Soğuk ve Sıcak Acilleri",
-            fileName: "15_yanik_soguk_ve_sicak_acillerinde_ilkyardim.pdf",
-          },
-          {
-            id: "17",
             displayName: "Göz, Kulak ve Buruna Yabancı Cisim Kaçması",
             fileName:
-              "16_goz_kulak_ve_buruna_yabanci_cisim_kacmasinda_ilkyardim.pdf",
+              "document.15_goz_kulak_ve_buruna_yabanci_cisim_kacmasinda_ilkyardim.pdf",
           },
         ];
         setDocumentFiles(fileList);
@@ -156,13 +142,13 @@ export default function Classroom() {
     </View>
   );
 
-  const handleOpenDocument = async (document: DocumentFile) => {
+  const handleOpenDocument = async (fileName: string, displayName: string) => {
     try {
       router.push({
         pathname: "/(pages)/pdfViewer",
         params: {
-          uri: document.fileName,
-          title: document.displayName,
+          fileName: fileName,
+          title: displayName,
         },
       });
     } catch (err) {
@@ -187,13 +173,13 @@ export default function Classroom() {
           </Text>
           <View style={styles.contentContainer}>
             {documentFiles.map((document) => (
-              <Pressable
+              <Button
                 key={document.id}
-                style={({ pressed }) => [
-                  styles.documentPressable,
-                  pressed && styles.documentPressablePressed,
-                ]}
-                onPress={() => handleOpenDocument(document)}
+                style={styles.documentButton}
+                mode="text"
+                onPress={() =>
+                  handleOpenDocument(document.fileName, document.displayName)
+                }
               >
                 <Text
                   variant="bodyLarge"
@@ -201,7 +187,7 @@ export default function Classroom() {
                 >
                   {document.displayName}
                 </Text>
-              </Pressable>
+              </Button>
             ))}
           </View>
         </View>
@@ -224,7 +210,7 @@ export default function Classroom() {
               labelStyle={styles.buttonLabel}
               onPress={navigateToQuiz}
             >
-              Quiz'e Git
+              Quiz&apos;e Git
             </Button>
           </View>
         </View>
