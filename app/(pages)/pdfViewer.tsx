@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions, View, ActivityIndicator, Pressable, Alert, Plat
 import { WebView } from 'react-native-webview';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { Text, Button } from 'react-native-paper';
-import PdfHandler, { PDFInfo } from '../utils/pdfCache';
+import PdfHandler, { PDFInfo } from '../../utils/pdfCache';
 import * as Linking from 'expo-linking';
 import * as FileSystem from 'expo-file-system';
 import * as IntentLauncher from 'expo-intent-launcher';
