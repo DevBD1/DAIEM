@@ -36,71 +36,70 @@ export default function Classroom() {
           {
             id: "3",
             displayName: "Acil Taşıma Teknikleri",
-            fileName: "document.03_acil_tasima_teknikleri.pdf",
+            fileName: "03_acil_tasima_teknikleri.pdf",
           },
           {
             id: "4",
             displayName: "OED Kullanımı",
-            fileName: "document.04_oed_ve_tyd.pdf",
+            fileName: "04_oed_ve_tyd.pdf",
           },
           {
             id: "5",
             displayName: "Havayolu Tıkanıklığı",
-            fileName: "document.05_havayolu_tikanikliginda_ilkyardim.pdf",
+            fileName: "05_havayolu_tikanikliginda_ilkyardim.pdf",
           },
           {
             id: "6",
             displayName: "Bilinç Bozuklukları ve Ciddi Hastalıklar",
             fileName:
-              "document.06_bilinc_bozukluklarinda_ve_ciddi_hastaliklarda_ilkyardim.pdf",
+              "06_bilinc_bozukluklarinda_ve_ciddi_hastaliklarda_ilkyardim.pdf",
           },
           {
             id: "7",
             displayName: "Kanamalar",
-            fileName: "document.07_kanamalarda_ilkyardim.pdf",
+            fileName: "07_kanamalarda_ilkyardim.pdf",
           },
           {
             id: "8",
             displayName: "Şok ve Göğüs Ağrısı",
-            fileName: "document.08_sok_ve_gogus_agrisinda_ilkyardim.pdf",
+            fileName: "08_sok_ve_gogus_agrisinda_ilkyardim.pdf",
           },
           {
             id: "9",
             displayName: "Yaralanmalar",
-            fileName: "document.09_yaralanmalarda_ilkyardim.pdf",
+            fileName: "09_yaralanmalarda_ilkyardim.pdf",
           },
           {
             id: "10",
             displayName: "Boğulmalar",
-            fileName: "document.10_bogulmalarda_ilkyardim.pdf",
+            fileName: "10_bogulmalarda_ilkyardim.pdf",
           },
           {
             id: "11",
             displayName: "Kırık, Çıkık ve Burkulmalar",
-            fileName: "document.11_kirik_cikik_ve_burkulmalarda_ilkyardim.pdf",
+            fileName: "11_kirik_cikik_ve_burkulmalarda_ilkyardim.pdf",
           },
           {
             id: "12",
             displayName: "Böcek ve Hayvan Isırıkları",
             fileName:
-              "document.12_bocek_sokmalari_ve_hayvan_isiriklarinda_ilkyardim.pdf",
+              "12_bocek_sokmalari_ve_hayvan_isiriklarinda_ilkyardim.pdf",
           },
           {
             id: "13",
             displayName: "Zehirlenmeler",
-            fileName: "document.13_zehirlenmelerde_ilkyardim.pdf",
+            fileName: "13_zehirlenmelerde_ilkyardim.pdf",
           },
           {
             id: "14",
             displayName: "Yanık, Soğuk ve Sıcak Acilleri",
-            fileName:
-              "document.14_yanik_soguk_ve_sicak_acillerinde_ilkyardim.pdf",
+            fileName: "14_yanik_soguk_ve_sicak_acillerinde_ilkyardim.pdf",
           },
           {
             id: "15",
             displayName: "Göz, Kulak ve Buruna Yabancı Cisim Kaçması",
             fileName:
-              "document.15_goz_kulak_ve_buruna_yabanci_cisim_kacmasinda_ilkyardim.pdf",
+              "15_goz_kulak_ve_buruna_yabanci_cisim_kacmasinda_ilkyardim.pdf",
           },
         ];
         setDocumentFiles(fileList);
