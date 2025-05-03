@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react"; // Add useEffect
+import React, { useState } from "react";
 import {
   View,
   Linking,
@@ -9,61 +8,25 @@ import {
   Pressable,
   Modal,
   Platform,
-  Alert,
 } from "react-native";
 import { Text, Button, Surface } from "react-native-paper";
 import { Link } from "expo-router";
 import { useAuth } from "../../components/authContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as ImagePicker from "expo-image-picker";
 import { styles } from "../../components/styles";
 
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const { width: screenWidth } = Dimensions.get("window");
 
+const handleOpenURL = (url: string) => {
+  Linking.openURL(url).catch((err) => console.error("An error occurred", err));
+};
+
 export default function Home() {
   const { isAuthenticated, logout, user } = useAuth();
-  const insets = useSafeAreaInsets();
   const [isZoomed, setIsZoomed] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [questionsAnswered, setQuestionsAnswered] = useState(0);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadQuestionsAnswered = async () => {
-      try {
-        const answered = await AsyncStorage.getItem("questionsAnswered");
-        setQuestionsAnswered(answered ? parseInt(answered) : 0);
-      } catch (error) {
-        console.error("Error loading questions answered:", error);
-      }
-    };
-
-    const loadProfileImage = async () => {
-      try {
-        const savedImage = await AsyncStorage.getItem("userProfileImage");
-        if (savedImage) {
-          setProfileImage(savedImage);
-        }
-      } catch (error) {
-        console.error("Error loading profile image:", error);
-      }
-    };
-
-    if (isAuthenticated) {
-      loadQuestionsAnswered();
-      loadProfileImage();
-    }
-  }, [isAuthenticated]);
-
-  const handleOpenURL = (url: string) => {
-    Linking.openURL(url).catch((err) =>
-      console.error("An error occurred", err)
-    );
-  };
 
   const carouselImages = [
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -80,7 +43,7 @@ export default function Home() {
 
   const handleImagePress = (index: number) => {
     setIsZoomed(true);
-    setModalImage(carouselImages[index] || undefined);
+    setModalImage(carouselImages[index] ?? undefined);
     setModalVisible(true);
   };
 
@@ -97,6 +60,61 @@ export default function Home() {
       console.error("Logout error:", error);
     }
   };
+
+  const renderGuestInfo = () => (
+    <Text style={styles.infoText}>
+      Eğitim için dersleri inceleyebilir, kayıt için bize ulaşabilirsiniz.
+    </Text>
+  );
+
+  const renderUserInfo = () => (
+    <View style={styles.userInfoContainer}>
+      <View style={styles.userTextInfo}>
+        <Text variant="bodyLarge" style={styles.cardText}>
+          TCKN:
+        </Text>
+        <Text variant="bodyLarge" style={styles.cardText}>
+          {user?.tckn ?? "-"}
+        </Text>
+      </View>
+    </View>
+  );
+
+  const renderGuestActions = () => (
+    <View style={styles.buttonContainer}>
+      <Button
+        mode="contained"
+        style={[styles.button, { flex: 1, marginRight: 8 }]}
+        contentStyle={styles.buttonContent}
+        labelStyle={styles.buttonLabel}
+        onPress={handleOpenAddress}
+      >
+        Adresimiz
+      </Button>
+      <Link href="/(pages)/login" asChild>
+        <Button
+          mode="contained"
+          style={styles.button}
+          contentStyle={styles.buttonContent}
+          labelStyle={styles.buttonLabel}
+        >
+          Giriş / Kayıt
+        </Button>
+      </Link>
+    </View>
+  );
+
+  const renderLogoutButton = () => (
+    <Button
+      mode="contained"
+      style={styles.button}
+      contentStyle={styles.buttonContent}
+      labelStyle={styles.buttonLabel}
+      onPress={handleLogout}
+    >
+      Çıkış Yap
+    </Button>
+  );
 
   const handleOpenAddress = () => {
     const address = "Bahçelievler Mh. 5006 Sk. No: 37 Manavgat / Antalya";
@@ -116,22 +134,6 @@ export default function Home() {
     }
   };
 
-  const pickImageAsync = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.5,
-    });
-
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
-      await AsyncStorage.setItem("userProfileImage", result.assets[0].uri);
-    } else {
-      console.log("You did not select any image.");
-    }
-  };
-
   return (
     <ScrollView style={styles.container}>
       <Surface style={styles.card} elevation={3}>
@@ -139,80 +141,12 @@ export default function Home() {
           <Text variant="titleMedium" style={styles.cardTitle}>
             {isAuthenticated ? "Kullanıcı Bilgileri" : "Bize Katılın"}
           </Text>
-          {!isAuthenticated && (
-            <Text style={[styles.infoText]}>
-              Eğitim için dersleri inceleyebilir, kayıt için bize
-              ulaşabilirsiniz.
-            </Text>
-          )}
+
+          {!isAuthenticated && renderGuestInfo()}
+
           <View style={styles.contentContainer}>
-            {isAuthenticated ? (
-              <View style={styles.userInfoContainer}>
-                <View style={styles.userTextInfo}>
-                  <Text variant="bodyLarge" style={styles.cardText}>
-                    TCKN:
-                  </Text>
-                  <Text variant="bodyLarge" style={styles.cardText}>
-                    {user?.tckn || "-"}
-                  </Text>
-                  {/*<Text variant="bodyLarge" style={styles.cardText}>
-                    Cevaplanan Soru: {questionsAnswered}
-                  </Text>*/}
-                </View>
-                {/*<Pressable onPress={pickImageAsync}>
-                  <Image
-                    source={
-                      profileImage
-                        ? { uri: profileImage }
-                        : require("../../assets/profile.png")
-                    }
-                    style={styles.profileImage}
-                  />
-                  <View style={styles.profileImageOverlay}>
-                    <MaterialIcons
-                      name="photo-camera"
-                      size={20}
-                      color="#FFFFFF"
-                    />
-                  </View>
-                </Pressable>*/}
-              </View>
-            ) : (
-              <>
-                <View style={styles.buttonContainer}>
-                  <Button
-                    mode="contained"
-                    style={[styles.button, { flex: 1, marginRight: 8 }]}
-                    contentStyle={styles.buttonContent}
-                    labelStyle={styles.buttonLabel}
-                    onPress={handleOpenAddress}
-                  >
-                    Adresimiz
-                  </Button>
-                  <Link href="/(pages)/login" asChild>
-                    <Button
-                      mode="contained"
-                      style={styles.button}
-                      contentStyle={styles.buttonContent}
-                      labelStyle={styles.buttonLabel}
-                    >
-                      Giriş / Kayıt
-                    </Button>
-                  </Link>
-                </View>
-              </>
-            )}
-            {isAuthenticated && (
-              <Button
-                mode="contained"
-                style={styles.button}
-                contentStyle={styles.buttonContent}
-                labelStyle={styles.buttonLabel}
-                onPress={handleLogout}
-              >
-                Çıkış Yap
-              </Button>
-            )}
+            {isAuthenticated ? renderUserInfo() : renderGuestActions()}
+            {isAuthenticated && renderLogoutButton()}
           </View>
         </View>
       </Surface>
@@ -271,6 +205,7 @@ export default function Home() {
                       }}
                     >
                       <Image
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         source={modalImage as any}
                         style={[
                           {

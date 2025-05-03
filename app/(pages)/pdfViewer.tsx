@@ -1,100 +1,106 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Text, View, Button, SafeAreaView, StyleSheet } from "react-native";
+import Pdf from "react-native-pdf";
+import { Asset } from "expo-asset";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, ActivityIndicator, Alert } from "react-native";
-import { useLocalSearchParams, router, Stack } from "expo-router";
-import { Text, Button } from "react-native-paper";
-import { getPdfUri, PDFInfo } from "../../utils/pdfCache";
-import * as FileViewer from "expo-file-viewer";
+import { styles as sharedStyles } from "../../components/styles";
 
+const pdfMap: Record<string, number> = {
+  "01_genel_ilkyardim_bilgileri.pdf": require("../../assets/pdfs/01_genel_ilkyardim_bilgileri.pdf"),
+  "02_vucut_sistemleri.pdf": require("../../assets/pdfs/02_vucut_sistemleri.pdf"),
+  "03_acil_tasima_teknikleri.pdf": require("../../assets/pdfs/03_acil_tasima_teknikleri.pdf"),
+  "04_oed_ve_tyd.pdf": require("../../assets/pdfs/04_oed_ve_tyd.pdf"),
+  "05_havayolu_tikanikliginda_ilkyardim.pdf": require("../../assets/pdfs/05_havayolu_tikanikliginda_ilkyardim.pdf"),
+  "06_bilinc_bozukluklarinda_ve_ciddi_hastaliklarda_ilkyardim.pdf": require("../../assets/pdfs/06_bilinc_bozukluklarinda_ve_ciddi_hastaliklarda_ilkyardim.pdf"),
+  "07_kanamalarda_ilkyardim.pdf": require("../../assets/pdfs/07_kanamalarda_ilkyardim.pdf"),
+  "08_sok_ve_gogus_agrisinda_ilkyardim.pdf": require("../../assets/pdfs/08_sok_ve_gogus_agrisinda_ilkyardim.pdf"),
+  "09_yaralanmalarda_ilkyardim.pdf": require("../../assets/pdfs/09_yaralanmalarda_ilkyardim.pdf"),
+  "10_bogulmalarda_ilkyardim.pdf": require("../../assets/pdfs/10_bogulmalarda_ilkyardim.pdf"),
+  "11_kirik_cikik_ve_burkulmalarda_ilkyardim.pdf": require("../../assets/pdfs/11_kirik_cikik_ve_burkulmalarda_ilkyardim.pdf"),
+  "12_bocek_sokmalari_ve_hayvan_isiriklarinda_ilkyardim.pdf": require("../../assets/pdfs/12_bocek_sokmalari_ve_hayvan_isiriklarinda_ilkyardim.pdf"),
+  "13_zehirlenmelerde_ilkyardim.pdf": require("../../assets/pdfs/13_zehirlenmelerde_ilkyardim.pdf"),
+  "14_yanik_soguk_ve_sicak_acillerinde_ilkyardim.pdf": require("../../assets/pdfs/14_yanik_soguk_ve_sicak_acillerinde_ilkyardim.pdf"),
+  "15_goz_kulak_ve_buruna_yabanci_cisim_kacmasinda_ilkyardim.pdf": require("../../assets/pdfs/15_goz_kulak_ve_buruna_yabanci_cisim_kacmasinda_ilkyardim.pdf"),
+};
 
-export default function PdfViewer() {
-  const { fileName, title } = useLocalSearchParams();
-  const [pdfInfo, setPdfInfo] = useState<PDFInfo>({ localUri: "" });
-
-  const loadPdf = async () => {
-    try {
-      console.log("Loading PDF:", fileName);
-      const result = await getPdfUri(fileName as string);
-      console.log("PDF load result:", result);
-        setPdfInfo(result);
-    } catch (err) {
-      console.error("Error loading PDF:", err);
-      Alert.alert("Hata", "PDF yüklenirken beklenmeyen bir hata oluştu.");
-    }
-  };
+const PDFViewer = () => {
+  const router = useRouter();
+  const { fileName, title } = useLocalSearchParams<{
+    fileName?: string;
+    title?: string;
+  }>();
+  const [pdfUri, setPdfUri] = useState<string | null>(null);
 
   useEffect(() => {
-    loadPdf();
+    const loadPdf = async () => {
+      if (!fileName) return;
+
+      const pdfModule = pdfMap[fileName];
+      if (!pdfModule) {
+        console.error("Dosya eşleşmesi bulunamadı:", fileName);
+        return;
+      }
+
+      const asset = Asset.fromModule(pdfModule);
+      await asset.downloadAsync();
+      setPdfUri(asset.localUri);
+    };
+
+    loadPdf().catch((err) => {
+      console.error("PDF yüklenirken hata oluştu:", err);
+    });
   }, [fileName]);
 
-  const openPdf = async () => {
-    try {
-      await FileViewer.openFile(pdfInfo.localUri, { displayName: title as string });
-    } catch (e) {
-      console.error("Error opening PDF:", e);
-      Alert.alert("Hata", "PDF açılırken bir hata oluştu.");
-    }
+  if (!pdfUri) {
+    return (
+      <SafeAreaView style={sharedStyles.container}>
+        <Text style={sharedStyles.loadingText}>Yükleniyor...</Text>
+      </SafeAreaView>
+    );
   }
+
   return (
-    <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: title as string,
-          headerStyle: {
-            backgroundColor: "#282b30",
-          },
-          headerTintColor: "#FF0000",
-        }}
-      />
-      {pdfInfo.localUri ? (
-        <View style={styles.container}>
-          <View style={styles.loadingContainer}>
-          <Button mode="outlined" onPress={openPdf} style={styles.returnButton}>
-            Harici Görüntüleyicide Aç
-          </Button>
-          <Button
-            mode="outlined"
-            onPress={() => router.back()}
-            style={styles.returnButton}
-          >
-            Geri Dön
-          </Button>
-          </View>
-        </View>
-      ) : (
-        <View style={styles.contentContainer}>
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#7289da" />
-            <Text style={styles.loadingText}>Yükleniyor...</Text>
-              <Button mode="outlined" onPress={openPdf} style={styles.returnButton}>
-              Harici Görüntüleyicide Aç
-            </Button>
+    <SafeAreaView style={sharedStyles.container}>
+      <View style={localStyles.backButton}>
+        <Button title="Geri" onPress={() => router.back()} color="#7289da" />
+      </View>
 
-          </View>
-        </View>
+      {title && (
+        <Text style={[sharedStyles.cardTitle, { marginBottom: 12 }]}>
+          {title}
+        </Text>
       )}
-    </View >
-  );
-}
 
-const styles = StyleSheet.create({
-  container: {
+      <View style={localStyles.pdfWrapper}>
+        <Pdf
+          source={{ uri: pdfUri }}
+          onError={(error) => console.error("PDF Error:", error)}
+          style={localStyles.pdf}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const localStyles = StyleSheet.create({
+  backButton: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
+  },
+  pdfWrapper: {
     flex: 1,
-    backgroundColor: "#282b30",
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: "#8C8C8C",
+    borderRadius: 12,
+    overflow: "hidden",
   },
-  contentContainer: {
-    backgroundColor: "#7289da",
-  },
-  loadingContainer: {
+  pdf: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  returnButton: {
-    borderColor: "#ff4444",
-    marginTop: 20,
-  },
-  loadingText: {
-    marginTop: 10,
-    color: "#FFFFFF",
+    width: "100%",
+    height: "100%",
   },
 });
+
+export default PDFViewer;
