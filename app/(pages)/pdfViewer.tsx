@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Text, View, Button, SafeAreaView, StyleSheet, Dimensions, useWindowDimensions } from "react-native";
-import Pdf, { Source } from "react-native-pdf";
+import { Text, View, Button, SafeAreaView, StyleSheet } from "react-native";
+import Pdf from "react-native-pdf";
 import { Asset } from "expo-asset";
 import React, { useEffect, useState } from "react";
 import { styles as sharedStyles } from "../../components/styles";
@@ -24,8 +24,6 @@ const pdfMap: Record<string, number> = {
   "15_goz_kulak_ve_buruna_yabanci_cisim_kacmasinda_ilkyardim.pdf": require("../../assets/pdfs/15_goz_kulak_ve_buruna_yabanci_cisim_kacmasinda_ilkyardim.pdf"),
 };
 
-
-
 const PDFViewer = () => {
   const router = useRouter();
   const { fileName, title } = useLocalSearchParams<{
@@ -33,23 +31,6 @@ const PDFViewer = () => {
     title?: string;
   }>();
   const [pdfUri, setPdfUri] = useState<string | null>(null);
-  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-  const [pdfWidth, setPdfWidth] = useState(screenWidth);
-  const [pdfHeight, setPdfHeight] = useState(screenHeight);
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      const { width, height } = Dimensions.get('window');
-      setPdfWidth(width);
-      setPdfHeight(height);
-    };
-
-    const subscription = Dimensions.addEventListener('change', updateDimensions);
-    return () => {
-      subscription.remove();
-    };
-  }, [screenWidth, screenHeight]);
-
 
   useEffect(() => {
     const loadPdf = async () => {
@@ -90,12 +71,11 @@ const PDFViewer = () => {
           {title}
         </Text>
       )}
-      
-      <View style={[localStyles.pdfWrapper, { width: pdfWidth, height:pdfHeight-100}]}>
-        <Pdf 
-          source={{ uri: pdfUri } as Source}
+
+      <View style={localStyles.pdfWrapper}>
+        <Pdf
+          source={{ uri: pdfUri }}
           onError={(error) => console.error("PDF Error:", error)}
-          enablePaging={true}
           style={localStyles.pdf}
         />
       </View>
@@ -109,16 +89,17 @@ const localStyles = StyleSheet.create({
     paddingTop: 0,
   },
   pdfWrapper: {
+    flex: 1,
     marginTop: 16,
     borderWidth: 1,
     borderColor: "#8C8C8C",
     borderRadius: 12,
-    overflow: "hidden"
+    overflow: "hidden",
   },
   pdf: {
-    flex: 1, 
-    width: pdfWidth,
-    height: pdfHeight-100,
+    flex: 1,
+    width: "100%",
+    height: "100%",
   },
 });
 
