@@ -41,6 +41,14 @@ export default function QuizScreen() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [selectedSetId, setSelectedSetId] = useState<number | null>(null);
   const [quizSets, setQuizSets] = useState<{ id: number; title: string }[]>([]);
+  const [userAnswers, setUserAnswers] = useState<
+    {
+      question: string;
+      options: string[];
+      correct: number;
+      selected: number | null;
+    }[]
+  >([]);
 
   useEffect(() => {
     fetchQuizQuestions();
@@ -154,6 +162,16 @@ export default function QuizScreen() {
     setIsCorrect(correctAnswer);
     setShowFeedback(true);
 
+    setUserAnswers((prev) => [
+      ...prev,
+      {
+        question: currentQuestion.question,
+        options: currentQuestion.options,
+        correct: currentQuestion.answer,
+        selected: selectedAnswer,
+      },
+    ]);
+
     if (correctAnswer) {
       setScore(score + 1);
     }
@@ -240,13 +258,50 @@ export default function QuizScreen() {
 
     if (quizCompleted) {
       return (
-        <Surface style={styles.surface} elevation={4}>
-          <Text variant="headlineMedium" style={styles.surfaceText}>
-            Test Tamamlandı!
-          </Text>
-          <Text style={styles.description}>
-            Toplam {questions.length} sorudan {score} doğru cevap verdiniz.
-          </Text>
+        <ScrollView>
+          <Surface style={styles.surface} elevation={4}>
+            <Text variant="headlineMedium" style={styles.surfaceText}>
+              Test Tamamlandı!
+            </Text>
+            <Text style={styles.description}>
+              Toplam {questions.length} sorudan {score} doğru cevap verdiniz.
+            </Text>
+          </Surface>
+
+          {userAnswers.map((item, index) => (
+            <Surface
+              key={index}
+              style={[styles.surface, styles.answerCard]}
+              elevation={3}
+            >
+              <Text style={styles.questionNumber}>
+                Soru {index + 1}: {item.question}
+              </Text>
+
+              {item.options.map((option, i) => {
+                const isSelected = i === item.selected;
+                const isCorrect = i === item.correct;
+
+                return (
+                  <Text
+                    key={i}
+                    style={{
+                      color: isCorrect
+                        ? "green"
+                        : isSelected
+                        ? "red"
+                        : "#FFFFFF",
+                      fontWeight: isCorrect || isSelected ? "bold" : "normal",
+                      marginBottom: 4,
+                    }}
+                  >
+                    {i + 1}. {option}
+                  </Text>
+                );
+              })}
+            </Surface>
+          ))}
+
           <Button
             mode="contained"
             onPress={handleStartQuiz}
@@ -254,7 +309,7 @@ export default function QuizScreen() {
           >
             Tekrar Başla
           </Button>
-        </Surface>
+        </ScrollView>
       );
     }
 
