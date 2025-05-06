@@ -33,13 +33,7 @@
     "web": {
       "favicon": "./assets/daiem-logo.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-asset",
-      "@config-plugins/react-native-blob-util",
-      "@config-plugins/react-native-pdf"
-    ],
+    "plugins": ["expo-router", "expo-font", "expo-asset"],
     "scheme": "daiem",
     "extra": {
       "eas": {

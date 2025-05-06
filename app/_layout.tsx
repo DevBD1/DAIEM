@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { View, ActivityIndicator } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import { AuthProvider } from "../components/authContext";
@@ -10,6 +10,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     MaterialIcons: require("@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialIcons.ttf"),
   });
 

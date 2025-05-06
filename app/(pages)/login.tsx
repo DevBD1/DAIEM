@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { Text, TextInput, Button, Surface } from "react-native-paper";
 import { router, Stack } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "../../components/authContext";
 import { validateTCKN } from "../../utils/tcknValidation";
 
@@ -56,10 +55,6 @@ export default function Login() {
     }
   };
 
-  const handleRegister = () => {
-    router.push("/(auth)/register");
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -83,6 +78,7 @@ export default function Login() {
           <View style={styles.card}>
             <View style={styles.cardContent}>
               <Image
+                // eslint-disable-next-line @typescript-eslint/no-require-imports
                 source={require("../../assets/daiem-logo.png")}
                 style={styles.logo}
                 accessibilityLabel="DAIEM Logo"
