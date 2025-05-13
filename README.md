@@ -1,1 +1,1 @@
-[Veri Tabanı](https://github.com/DevBD1/DAIEM_DB)
+[Veri Tabanı](https://github.com/DenizAntalya/DAIEM_DB)
